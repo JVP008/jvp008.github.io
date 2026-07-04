@@ -9,9 +9,13 @@
   </head>
   <body>
 
-    <button id="theme-toggle" title="Toggle dark/light mode" aria-label="Toggle theme">☼</button>
+    <button id="theme-toggle" title="Toggle dark/light mode" aria-label="Toggle theme">
+      <svg class="sun-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>
+      <svg class="moon-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
 
     <div class="container">
+      <div class="resizer-handle" title="Drag to resize page width" aria-label="Resize page width" role="separator"></div>
 
       <p class="back"><a href="../index.html">← back</a></p>
 
@@ -40,22 +44,297 @@ Here are a few things you should know : </p>
   There's already enough AI-generated slop on Linkedin anyway! </p>
       </article>
 
+      <hr>
+
+      <section id="comments-section" class="comments-section">
+        <h2>Comments</h2>
+        <div id="comments-list" class="comments-list">
+          <!-- Comments will be rendered here dynamically -->
+        </div>
+
+        <form id="comment-form" class="comment-form">
+          <h3>Leave a Comment</h3>
+          <div class="comment-form-group">
+            <input type="text" id="comment-author" placeholder="Your name" required maxlength="50">
+          </div>
+          <div class="comment-form-group">
+            <textarea id="comment-body-input" placeholder="Join the discussion..." required maxlength="1000"></textarea>
+          </div>
+          <button type="submit">Submit Comment</button>
+        </form>
+      </section>
+
     </div>
 
     <script>
       (function () {
+        // Apply saved container width immediately
+        const container = document.querySelector('.container');
+        let storedWidth;
+        try {
+          storedWidth = localStorage.getItem('preferred-width');
+        } catch (e) {
+          // Ignore localStorage errors in private browsing/iframe sandboxing
+        }
+        if (storedWidth) {
+          container.style.maxWidth = storedWidth;
+        }
+
         const btn = document.getElementById('theme-toggle');
-        const stored = localStorage.getItem('theme');
+        let stored;
+        try {
+          stored = localStorage.getItem('theme');
+        } catch (e) {
+          // Ignore localStorage errors in private browsing/iframe sandboxing
+        }
         if (stored === 'dark') {
           document.body.classList.add('dark');
-          btn.textContent = '☾';
         }
         btn.addEventListener('click', function () {
           document.body.classList.toggle('dark');
           const isDark = document.body.classList.contains('dark');
-          btn.textContent = isDark ? '☾' : '☼';
-          localStorage.setItem('theme', isDark ? 'dark' : 'light');
+          try {
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+          } catch (e) {
+            // Ignore localStorage errors in private browsing/iframe sandboxing
+          }
         });
+
+        // Container Resizer Logic
+        const resizer = container.querySelector('.resizer-handle');
+        if (resizer) {
+          let isDragging = false;
+
+          function onStart(e) {
+            if (isDragging) return;
+            e.preventDefault();
+            isDragging = true;
+            resizer.classList.add('dragging');
+            document.body.classList.add('dragging-width');
+
+            window.addEventListener('mousemove', onMove, { passive: false });
+            window.addEventListener('mouseup', onEnd);
+            window.addEventListener('touchmove', onMove, { passive: false });
+            window.addEventListener('touchend', onEnd);
+            window.addEventListener('touchcancel', onEnd);
+          }
+
+          function onMove(e) {
+            if (!isDragging) return;
+            let clientX;
+            if (e.touches && e.touches.length > 0) {
+              clientX = e.touches[0].clientX;
+            } else {
+              clientX = e.clientX;
+            }
+
+            // Assumes .container is horizontally centered (margin: 0 auto)
+            const rect = container.getBoundingClientRect();
+            const center = rect.left + rect.width / 2;
+            let newWidth = Math.abs(clientX - center) * 2;
+
+            const minWidth = 400;
+            const maxWidthLimit = window.innerWidth * 0.95;
+
+            if (newWidth < minWidth) newWidth = minWidth;
+            if (newWidth > maxWidthLimit) newWidth = maxWidthLimit;
+
+            const widthStr = `${newWidth}px`;
+            container.style.maxWidth = widthStr;
+            try {
+              localStorage.setItem('preferred-width', widthStr);
+            } catch (e) {
+              // Ignore localStorage errors in private browsing/iframe sandboxing
+            }
+          }
+
+          function onEnd() {
+            if (!isDragging) return;
+            isDragging = false;
+            resizer.classList.remove('dragging');
+            document.body.classList.remove('dragging-width');
+
+            window.removeEventListener('mousemove', onMove);
+            window.removeEventListener('mouseup', onEnd);
+            window.removeEventListener('touchmove', onMove);
+            window.removeEventListener('touchend', onEnd);
+            window.removeEventListener('touchcancel', onEnd);
+          }
+
+          resizer.addEventListener('mousedown', onStart);
+          resizer.addEventListener('touchstart', onStart, { passive: false });
+        }
+
+        // Comments System Logic
+        const storageKey = 'comments-hello-world';
+        let comments = [];
+
+        function escapeHTML(str) {
+          if (typeof str !== 'string') return '';
+          return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+        }
+
+        function getAvatarColor(name) {
+          let hash = 0;
+          for (let i = 0; i < name.length; i++) {
+            hash = name.charCodeAt(i) + ((hash << 5) - hash);
+          }
+          const hue = Math.abs(hash) % 360;
+          return `hsl(${hue}, 60%, 40%)`;
+        }
+
+        function getInitials(name) {
+          if (!name) return '?';
+          const parts = name.trim().split(/\s+/);
+          if (parts.length === 1) {
+            return [...parts[0]].slice(0, 2).join('').toUpperCase();
+          }
+          return ([...parts[0]][0] + [...parts[parts.length - 1]][0]).toUpperCase();
+        }
+
+        function formatDate(timestamp) {
+          const date = new Date(timestamp);
+          return date.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+          });
+        }
+
+        function loadComments() {
+          try {
+            const stored = localStorage.getItem(storageKey);
+            if (stored) {
+              const parsed = JSON.parse(stored);
+              if (Array.isArray(parsed)) {
+                comments = parsed;
+              } else {
+                throw new Error('Stored comments is not an array');
+              }
+            } else {
+              comments = [
+                {
+                  id: 'default-1',
+                  author: 'Alex',
+                  body: 'Great first post! Looking forward to reading more of your writing.',
+                  timestamp: Date.now() - 24 * 60 * 60 * 1000
+                },
+                {
+                  id: 'default-2',
+                  author: 'Sam',
+                  body: 'I totally agree about AI-generated content. Keep it real!',
+                  timestamp: Date.now() - 12 * 60 * 60 * 1000
+                }
+              ];
+              try {
+                localStorage.setItem(storageKey, JSON.stringify(comments));
+              } catch (e) {
+                // Ignore localStorage errors
+              }
+            }
+          } catch (e) {
+            comments = [
+              {
+                id: 'default-1',
+                author: 'Alex',
+                body: 'Great first post! Looking forward to reading more of your writing.',
+                timestamp: Date.now() - 24 * 60 * 60 * 1000
+              },
+              {
+                id: 'default-2',
+                author: 'Sam',
+                body: 'I totally agree about AI-generated content. Keep it real!',
+                timestamp: Date.now() - 12 * 60 * 60 * 1000
+              }
+            ];
+          }
+        }
+
+        function saveComments() {
+          try {
+            localStorage.setItem(storageKey, JSON.stringify(comments));
+          } catch (e) {
+            console.error('Failed to save comments to localStorage:', e);
+          }
+        }
+
+        function renderComments() {
+          const listContainer = document.getElementById('comments-list');
+          if (!listContainer) return;
+
+          listContainer.innerHTML = '';
+
+          if (comments.length === 0) {
+            listContainer.innerHTML = '<p class="no-comments">No comments yet. Be the first to comment!</p>';
+            return;
+          }
+
+          comments.forEach(comment => {
+            const card = document.createElement('div');
+            card.className = 'comment-card';
+
+            const initials = getInitials(comment.author);
+            const avatarColor = getAvatarColor(comment.author);
+            const formattedDate = formatDate(comment.timestamp);
+            const escapedInitials = escapeHTML(initials);
+            const escapedAuthor = escapeHTML(comment.author);
+            const escapedBody = escapeHTML(comment.body);
+
+            card.innerHTML = `
+              <div class="comment-avatar" style="background-color: ${avatarColor};" aria-hidden="true">
+                ${escapedInitials}
+              </div>
+              <div class="comment-content">
+                <div class="comment-header">
+                  <span class="comment-author">${escapedAuthor}</span>
+                  <span class="comment-date">${formattedDate}</span>
+                </div>
+                <div class="comment-body">${escapedBody}</div>
+              </div>
+            `;
+            listContainer.appendChild(card);
+          });
+        }
+
+        const commentForm = document.getElementById('comment-form');
+        if (commentForm) {
+          commentForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const authorInput = document.getElementById('comment-author');
+            const bodyInput = document.getElementById('comment-body-input');
+
+            const author = authorInput.value.trim();
+            const body = bodyInput.value.trim();
+
+            if (!author || !body) return;
+
+            const newComment = {
+              id: 'comment-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+              author: author,
+              body: body,
+              timestamp: Date.now()
+            };
+
+            comments.push(newComment);
+            saveComments();
+            renderComments();
+
+            authorInput.value = '';
+            bodyInput.value = '';
+          });
+        }
+
+        loadComments();
+        renderComments();
       })();
     </script>
 
