@@ -129,17 +129,7 @@
 
     <script>
       (function () {
-        // Apply saved container width immediately
         const container = document.querySelector('.container');
-        let storedWidth;
-        try {
-          storedWidth = localStorage.getItem('preferred-width');
-        } catch (e) {
-          // Ignore localStorage errors in private browsing/iframe sandboxing
-        }
-        if (storedWidth) {
-          container.style.maxWidth = storedWidth;
-        }
 
         const btn = document.getElementById('theme-toggle');
         let stored;
@@ -218,11 +208,6 @@
 
             const widthStr = `${newWidth}px`;
             container.style.maxWidth = widthStr;
-            try {
-              localStorage.setItem('preferred-width', widthStr);
-            } catch (e) {
-              // Ignore localStorage errors in private browsing/iframe sandboxing
-            }
           }
 
           function onEnd() {
