@@ -60,7 +60,7 @@ body.dark #theme-toggle {
 
 /* ── Container (centered like Karpathy) ── */
 .container {
-  max-width: 845px;
+  max-width: 850px;
   margin: 0 auto;
   padding: 60px 20px 80px;
   position: relative;
