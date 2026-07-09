@@ -36,8 +36,8 @@ body {
 }
 
 body.dark ::selection {
-  background: rgba(255, 105, 135, 0.5);
-  color: #fff;
+  background: rgba(253, 224, 71, 0.55);
+  color: #000;
 }
 
 /* ── Dark mode ── */
