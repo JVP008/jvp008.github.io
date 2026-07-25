@@ -1,65 +1,140 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>The most fundamental way to check even/odd — Jayesh Vinod Patil</title>
-    <meta name="description" content=":)">
-    <link rel="stylesheet" href="../style.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      The most fundamental way to check even/odd — Jayesh Vinod Patil
+    </title>
+    <meta name="description" content=":)" />
+    <link rel="stylesheet" href="../style.css" />
+    <script src="../blog-comments.js" defer></script>
   </head>
   <body>
-
-    <button id="theme-toggle" title="Toggle dark/light mode" aria-label="Toggle theme">
-      <svg class="sun-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>
-      <svg class="moon-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    <button
+      id="theme-toggle"
+      title="Toggle dark/light mode"
+      aria-label="Toggle theme"
+    >
+      <svg
+        class="sun-icon"
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2" />
+        <path d="M12 20v2" />
+        <path d="M4.93 4.93l1.41 1.41" />
+        <path d="M17.66 17.66l1.41 1.41" />
+        <path d="M2 12h2" />
+        <path d="M20 12h2" />
+        <path d="M6.34 17.66l-1.41 1.41" />
+        <path d="M19.07 4.93l-1.41 1.41" />
+      </svg>
+      <svg
+        class="moon-icon"
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+      </svg>
     </button>
 
     <div class="container">
-      <div class="resizer-handle" title="Drag to resize page width" aria-label="Resize page width" role="separator"></div>
+      <div
+        class="resizer-handle"
+        title="Drag to resize page width"
+        aria-label="Resize page width"
+        role="separator"
+      ></div>
 
       <p class="back"><a href="../index.html">← back</a></p>
 
       <article>
-        <img src="blog2.png" alt="A hand holding binary cubes with streams of 0s and 1s flowing into the distance" class="blog-hero-img">
+        <img
+          src="blog2.png"
+          alt="A hand holding binary cubes with streams of 0s and 1s flowing into the distance"
+          class="blog-hero-img"
+        />
 
         <h1 class="post-title">The most fundamental way to check even/odd</h1>
         <p class="post-date">july 2026</p>
 
         <p>
-          What could be the most fundamental way to determine whether a number is even or odd without using the modulo (%) operator? <b>Bits (0/1)</b> the "language of computers," and the only thing a computer TRULY understands.</p>
-
-        <p>
-          But how!! how can we determine whether the number is odd or even using just those two digits or some combination of them ??
-          We will see it gradually...
+          What could be the most fundamental way to determine whether a number
+          is even or odd without using the modulo (%) operator?
+          <b>Bits (0/1)</b> the "language of computers," and the only thing a
+          computer TRULY understands.
         </p>
 
         <p>
-          Let's start from scratch : <br>
-          
-          <strong>Basics: </strong> <br>
-          Unary Means - 1 <br>
-          Binary Means - 2 (we are going to deal with this one)<br> 
-          Triplet Means - 3 .... <br> 
-          <p><strong>Definition of Binary System:</strong> <br>
-          even 5yr old knows what a binary system is (the world has changed) : <br> The binary system is a number or counting system where, Instead of using ten digits (0–9) like we humans normally do, it uses just two: 0 and 1.
-          <br> <a href="https://en.wikipedia.org/wiki/Binary_number">Check out a more formal definition here.</a>
+          But how!! how can we determine whether the number is odd or even using
+          just those two digits or some combination of them ?? We will see it
+          gradually...
+        </p>
+
+        <div>
+          Let's start from scratch : <br />
+
+          <strong>Basics: </strong> <br />
+          Unary Means - 1 <br />
+          Binary Means - 2 (we are going to deal with this one)<br />
+          Triplet Means - 3 .... <br />
+          <p>
+            <strong>Definition of Binary System:</strong> <br />
+            even 5yr old knows what a binary system is (the world has changed) :
+            <br />
+            The binary system is a number or counting system where, Instead of
+            using ten digits (0–9) like we humans normally do, it uses just two:
+            0 and 1. <br />
+            <a href="https://en.wikipedia.org/wiki/Binary_number"
+              >Check out a more formal definition here.</a
+            >
           </p>
-        </p>
+        </div>
 
         <p><strong>Definition of odd and even :</strong></p>
 
-        <p>
+        <div>
           <ul>
-          <li>A number is said to be <b>even</b> if it is <b>perfectly</b> divisible by 2. </li>
-          <li>A number is said to be <b>odd</b> if it is NOT divisible by 2. </li>
-        </ul>
-        </p>
-        <hr>
+            <li>
+              A number is said to be <b>even</b> if it is
+              <b>perfectly</b> divisible by 2.
+            </li>
+            <li>
+              A number is said to be <b>odd</b> if it is NOT divisible by 2.
+            </li>
+          </ul>
+        </div>
+        <hr />
         <p>
-          Back in the school/college days we were taught that just like decimal number we can perform arithmetic operations on binary numbers as well:
-          we can do addition, subtraction, division, multiplication and so on... Later, in programming, we also learned that binary numbers can be manipulated using bitwise operators,which work on each 0 and 1 separately i.e they operate on thier individual bits.
-          <a href="https://www.geeksforgeeks.org/dsa/introduction-to-bitwise-algorithms-data-structures-and-algorithms-tutorial/">learn more</a>
-        <p>The table below demonstrates the AND, OR, and XOR bitwise operations.</p>
+          Back in the school/college days we were taught that just like decimal
+          number we can perform arithmetic operations on binary numbers as well:
+          we can do addition, subtraction, division, multiplication and so on...
+          Later, in programming, we also learned that binary numbers can be
+          manipulated using bitwise operators,which work on each 0 and 1
+          separately i.e they operate on thier individual bits.
+          <a
+            href="https://www.geeksforgeeks.org/dsa/introduction-to-bitwise-algorithms-data-structures-and-algorithms-tutorial/"
+            >learn more</a
+          >
+        </p>
+
+        <p>
+          The table below demonstrates the AND, OR, and XOR bitwise operations.
+        </p>
 
         <div class="blog-table-wrapper">
           <table class="blog-table">
@@ -141,11 +216,11 @@
             </tbody>
           </table>
         </div>
-    <hr>
-    <p>
-        Now that we have covered the basic concepts, let's see the implementation. 
-    </p>
-    
+        <hr />
+        <p>
+          Now that we have covered the basic concepts, let's see the
+          implementation.
+        </p>
 
         <!-- ── 1. The Decimal Approach ── -->
         <h2 class="blog-section-title">1] The Decimal/Common Approach:</h2>
@@ -154,11 +229,18 @@
         <ol>
           <li>take input from user .</li>
           <li>divide it by 2</li>
-          <li>if its completely divisible by 2 (as said earlier) we return "Even" if its not we return "Odd",   as simple as that .</li>
+          <li>
+            if its completely divisible by 2 (as said earlier) we return "Even"
+            if its not we return "Odd", as simple as that .
+          </li>
         </ol>
 
         <p>Here is the python program :</p>
-        <img src="Decimal_way.png" alt="Python program showing the decimal modulo approach to check even/odd" class="blog-img">
+        <img
+          src="Decimal_way.png"
+          alt="Python program showing the decimal modulo approach to check even/odd"
+          class="blog-img"
+        />
 
         <p><strong>what we used here :</strong></p>
         <ol>
@@ -169,18 +251,20 @@
         </ol>
 
         <div class="blog-note">
-          <strong>Things to take care of:</strong><br>
-          None. just make sure that you dont divide by 0. unless you enjoy crashing programs .
+          <strong>Things to take care of:</strong><br />
+          None. just make sure that you dont divide by 0. unless you enjoy
+          crashing programs .
         </div>
 
-        <hr>
+        <hr />
 
         <h2 class="blog-section-title">2.1] Binary/fundamental Approach:</h2>
 
         <p>
-          Before talking about logic itself , lets understand how it works:<br>
-          Its all about Observation. look at the image below did you notice something?
-          Every EVEN number has 0 in the 2⁰ position and for ODD its 1.
+          Before talking about logic itself , lets understand how it works:<br />
+          Its all about Observation. look at the image below did you notice
+          something? Every EVEN number has 0 in the 2⁰ position and for ODD its
+          1.
         </p>
 
         <div class="blog-table-wrapper">
@@ -264,14 +348,24 @@
         <p><strong>Steps:</strong></p>
         <ol>
           <li>take a number as input from user .</li>
-          <li>convert that number into binary using '<strong>bin()</strong>' function in python and store it in variable or don't .
-          	it will return string for e.g : 4 will be equals "100"</li>
+          <li>
+            convert that number into binary using '<strong>bin()</strong>'
+            function in python and store it in variable or don't . it will
+            return string for e.g : 4 will be equals "100"
+          </li>
           <li>compare the last string character with "0"</li>
-          <li>if the last character is "0" , function will return "Even" otherwise "Odd".</li>
+          <li>
+            if the last character is "0" , function will return "Even" otherwise
+            "Odd".
+          </li>
         </ol>
 
         <p>Here is the program:</p>
-        <img src="2.1.png" alt="Python program using bin() function and negative indexing to check even/odd" class="blog-img">
+        <img
+          src="2.1.png"
+          alt="Python program using bin() function and negative indexing to check even/odd"
+          class="blog-img"
+        />
 
         <p><strong>what we used here :</strong></p>
         <ol>
@@ -282,37 +376,64 @@
         </ol>
 
         <div class="blog-note">
-          <strong>Things to take care of :</strong><br>
-          Notice that we are not comparing last character/element with the 0 (integer) ; we are comparing it with "0" (string) if you missed that ... well, more power to you.
+          <strong>Things to take care of :</strong><br />
+          Notice that we are not comparing last character/element with the 0
+          (integer) ; we are comparing it with "0" (string) if you missed that
+          ... well, more power to you.
         </div>
 
-        <hr>
+        <hr />
 
         <!-- ── 2.2 Same Same But Different ── -->
         <h2 class="blog-section-title">2.2] Bitwise AND (&) Approach :</h2>
 
         <p>
-          Earlier, we talked about bitwise operators, but Program 2.1 didn't use any of them.Well, That was just one approach. Now let's do it using bitwise AND (&amp;).
+          Earlier, we talked about bitwise operators, but Program 2.1 didn't use
+          any of them.Well, That was just one approach. Now let's do it using
+          bitwise AND (&amp;).
         </p>
 
         <p><strong>Steps:</strong></p>
         <ol>
           <li>First, take a number as input from the user.</li>
-          <li>perform a bitwise AND operation between the number and 1 (i.e n &amp; 1).</li>
-          <li>If the result is 0, the last bit is 0, which means the number is Even.</li>
+          <li>
+            perform a bitwise AND operation between the number and 1 (i.e n
+            &amp; 1).
+          </li>
+          <li>
+            If the result is 0, the last bit is 0, which means the number is
+            Even.
+          </li>
           <li>Otherwise, number is Odd asss simple as that.</li>
         </ol>
 
         <p>Here is the program:</p>
-        <img src="2.2.png" alt="Python program using bitwise AND operator to check even/odd" class="blog-img">
+        <img
+          src="2.2.png"
+          alt="Python program using bitwise AND operator to check even/odd"
+          class="blog-img"
+        />
 
         <p><strong>Things to notice here :</strong></p>
         <ul>
-          <li>We didn't convert the input to binary this time. Why? Because if we did convert it explicitly using the bin() function, it would return something like "0b10101...". If we then tried to convert it into an integer directly, the program will throw an error because the string contains "0b" (It simply indicates that the number is in binary form).</li>
           <li>
-            <strong>Someone: "What if we perform a bitwise operation on a string, for e.g, "0b0101" &amp; "0001" ?"</strong><br>
-            We can't, because, as the name suggests, it's a bitwise operator, and it does not work on strings <b>directly</b>.
-            But if you know how to strip a string so that the left part ("0b") and the right part ("0101") get separated, then you can go that way as well by converting "0101" back into an integer .
+            We didn't convert the input to binary this time. Why? Because if we
+            did convert it explicitly using the bin() function, it would return
+            something like "0b10101...". If we then tried to convert it into an
+            integer directly, the program will throw an error because the string
+            contains "0b" (It simply indicates that the number is in binary
+            form).
+          </li>
+          <li>
+            <strong
+              >Someone: "What if we perform a bitwise operation on a string, for
+              e.g, "0b0101" &amp; "0001" ?"</strong
+            ><br />
+            We can't, because, as the name suggests, it's a bitwise operator,
+            and it does not work on strings <b>directly</b>. But if you know how
+            to strip a string so that the left part ("0b") and the right part
+            ("0101") get separated, then you can go that way as well by
+            converting "0101" back into an integer .
           </li>
         </ul>
 
@@ -324,53 +445,59 @@
           <li>Comparison operator (==)</li>
         </ol>
 
-
-        <hr>
+        <hr />
 
         <!-- ── Summary ── -->
         <div class="blog-summary">
           <p><strong>I'm Done, here is the summary:</strong></p>
           <ul>
-            <li>Even numbers have 0 at their last bit, whereas odd numbers have 1.</li>
-            <li>we learnt about three methods for finding out whether the number is even or odd: modulo (%), bin()+Negative_Indexing and bitwise AND (&amp;).</li>
-            <li>Out of the three techniques, the bitwise technique (n &amp; 1) seems most straightforward and atomic to ME, rest is up to you.</li>
+            <li>
+              Even numbers have 0 at their last bit, whereas odd numbers have 1.
+            </li>
+            <li>
+              we learnt about three methods for finding out whether the number
+              is even or odd: modulo (%), bin()+Negative_Indexing and bitwise
+              AND (&amp;).
+            </li>
+            <li>
+              Out of the three techniques, the bitwise technique (n &amp; 1)
+              seems most straightforward and atomic to ME, rest is up to you.
+            </li>
           </ul>
         </div>
 
-        <p>Dont hesitate to DM me on linkedin.
-
+        <p>Dont hesitate to DM me on linkedin.</p>
       </article>
-
     </div>
 
     <script>
       (function () {
-        const container = document.querySelector('.container');
+        const container = document.querySelector(".container");
 
-        const btn = document.getElementById('theme-toggle');
+        const btn = document.getElementById("theme-toggle");
         let stored;
         try {
-          stored = localStorage.getItem('theme');
+          stored = localStorage.getItem("theme");
         } catch (e) {
           // Ignore localStorage errors in private browsing/iframe sandboxing
         }
-        if (stored === 'dark') {
-          document.documentElement.classList.add('dark');
-          document.body.classList.add('dark');
+        if (stored === "dark") {
+          document.documentElement.classList.add("dark");
+          document.body.classList.add("dark");
         }
-        btn.addEventListener('click', function () {
-          document.documentElement.classList.toggle('dark');
-          document.body.classList.toggle('dark');
-          const isDark = document.body.classList.contains('dark');
+        btn.addEventListener("click", function () {
+          document.documentElement.classList.toggle("dark");
+          document.body.classList.toggle("dark");
+          const isDark = document.body.classList.contains("dark");
           try {
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            localStorage.setItem("theme", isDark ? "dark" : "light");
           } catch (e) {
             // Ignore localStorage errors in private browsing/iframe sandboxing
           }
         });
 
         // Container Resizer Logic
-        const resizer = container.querySelector('.resizer-handle');
+        const resizer = container.querySelector(".resizer-handle");
         if (resizer) {
           let isDragging = false;
 
@@ -378,14 +505,14 @@
             if (isDragging) return;
             e.preventDefault();
             isDragging = true;
-            resizer.classList.add('dragging');
-            document.body.classList.add('dragging-width');
+            resizer.classList.add("dragging");
+            document.body.classList.add("dragging-width");
 
-            window.addEventListener('mousemove', onMove, { passive: false });
-            window.addEventListener('mouseup', onEnd);
-            window.addEventListener('touchmove', onMove, { passive: false });
-            window.addEventListener('touchend', onEnd);
-            window.addEventListener('touchcancel', onEnd);
+            window.addEventListener("mousemove", onMove, { passive: false });
+            window.addEventListener("mouseup", onEnd);
+            window.addEventListener("touchmove", onMove, { passive: false });
+            window.addEventListener("touchend", onEnd);
+            window.addEventListener("touchcancel", onEnd);
           }
 
           function onMove(e) {
@@ -415,22 +542,20 @@
           function onEnd() {
             if (!isDragging) return;
             isDragging = false;
-            resizer.classList.remove('dragging');
-            document.body.classList.remove('dragging-width');
+            resizer.classList.remove("dragging");
+            document.body.classList.remove("dragging-width");
 
-            window.removeEventListener('mousemove', onMove);
-            window.removeEventListener('mouseup', onEnd);
-            window.removeEventListener('touchmove', onMove);
-            window.removeEventListener('touchend', onEnd);
-            window.removeEventListener('touchcancel', onEnd);
+            window.removeEventListener("mousemove", onMove);
+            window.removeEventListener("mouseup", onEnd);
+            window.removeEventListener("touchmove", onMove);
+            window.removeEventListener("touchend", onEnd);
+            window.removeEventListener("touchcancel", onEnd);
           }
 
-          resizer.addEventListener('mousedown', onStart);
-          resizer.addEventListener('touchstart', onStart, { passive: false });
+          resizer.addEventListener("mousedown", onStart);
+          resizer.addEventListener("touchstart", onStart, { passive: false });
         }
-
       })();
     </script>
-
   </body>
 </html>

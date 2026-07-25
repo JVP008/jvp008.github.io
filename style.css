@@ -1,33 +1,50 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap");
 
 /* ── Reset ── */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
 /* ── Custom Cursor ── */
-html, body {
-  cursor: url("arrowhead.svg") 3 1, auto;
+html,
+body {
+  cursor:
+    url("arrowhead.svg") 3 1,
+    auto;
 }
 
-html.dark, body.dark {
-  cursor: url("arrowhead-rounded-outline.svg") 5 3, auto;
+html.dark,
+body.dark {
+  cursor:
+    url("arrowhead-rounded-outline.svg") 5 3,
+    auto;
 }
 
-a, button, [role="button"], input[type="submit"], input[type="button"], label {
-  cursor: url("hand-pointer.svg") 8 1, pointer !important;
+a,
+button,
+[role="button"],
+input[type="submit"],
+input[type="button"],
+label {
+  cursor:
+    url("hand-pointer.svg") 8 1,
+    pointer !important;
 }
 
 /* ── Base (light mode) ── */
 body {
-  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-family: Georgia, "Times New Roman", Times, serif;
   font-size: 18px;
   line-height: 1.6;
   color: #333;
   background: #fff;
-  transition: background 0.3s, color 0.3s;
+  transition:
+    background 0.3s,
+    color 0.3s;
 }
 
 ::selection {
@@ -68,7 +85,7 @@ body.dark #theme-toggle {
 
 /* ── Subtle decorative vertical dashed line ── */
 .container::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   bottom: 0;
@@ -115,7 +132,6 @@ body.dragging-width {
   user-select: none;
   cursor: col-resize;
 }
-
 
 /* ── Header ── */
 header {
@@ -303,7 +319,9 @@ article p {
   gap: 10px;
   opacity: 0;
   transform: translateY(-8px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .email-reveal-container.show {
@@ -337,7 +355,9 @@ body.dark .email-address {
   background-color: #f7f7f7;
   color: #333;
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
 }
 
 .email-copy-btn:hover {
@@ -377,7 +397,7 @@ body.dark .email-copy-success {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  font-family: 'Caveat', cursive;
+  font-family: "Caveat", cursive;
   font-size: 1.6em;
   color: #d35400;
   transform: rotate(-3deg);
@@ -395,16 +415,14 @@ body.dark .handwritten-annotation {
 }
 
 @keyframes bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
     transform: translateY(6px);
   }
 }
-
-
-
 
 /* ── Blog Hero Image ── */
 .blog-hero-img {
@@ -563,5 +581,317 @@ body.dark .blog-summary {
   margin-bottom: 0;
 }
 
+/* ── Comments Section ── */
+.comments-section {
+  margin-top: 40px;
+}
 
+.comments-section h2 {
+  font-size: 1.4em;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+}
 
+body.dark .comments-section h2 {
+  border-bottom-color: #444;
+}
+
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.no-comments {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+}
+
+body.dark .no-comments {
+  color: #666;
+}
+
+@keyframes commentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.comment-card {
+  display: flex;
+  gap: 14px;
+  padding: 16px;
+  background-color: #f9f9f9;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  animation: commentFadeIn 0.3s ease-out forwards;
+}
+
+body.dark .comment-card {
+  background-color: #222;
+  border-color: #333;
+}
+
+.comment-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1em;
+  color: #fff;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.comment-content {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.comment-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.comment-author {
+  font-weight: bold;
+  font-size: 0.95em;
+  color: #222;
+}
+
+body.dark .comment-author {
+  color: #eee;
+}
+
+.comment-date {
+  font-size: 0.8em;
+  color: #777;
+}
+
+body.dark .comment-date {
+  color: #999;
+}
+
+.comment-body {
+  font-size: 0.95em;
+  line-height: 1.5;
+  color: #444;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+body.dark .comment-body {
+  color: #ccc;
+}
+
+.comment-form {
+  border-top: 1px solid #ddd;
+  padding-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+body.dark .comment-form {
+  border-top-color: #444;
+}
+
+.comment-form h3 {
+  font-size: 1.2em;
+  margin-bottom: 4px;
+}
+
+.comment-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.comment-form label {
+  font-size: 0.9em;
+  font-weight: bold;
+  color: #555;
+}
+
+body.dark .comment-form label {
+  color: #aaa;
+}
+
+.comment-form label .required {
+  color: #d35400;
+}
+
+body.dark .comment-form label .required {
+  color: #ffd700;
+}
+
+.comment-form label .hint {
+  font-size: 0.85em;
+  font-weight: normal;
+  font-style: italic;
+  color: #888;
+  margin-left: 6px;
+}
+
+body.dark .comment-form label .hint {
+  color: #666;
+}
+
+.comment-form input[type="text"],
+.comment-form input[type="email"],
+.comment-form input[type="url"],
+.comment-form textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #333;
+  font-family: inherit;
+  font-size: 0.95em;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.comment-form textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.comment-form input[type="text"]::placeholder,
+.comment-form input[type="email"]::placeholder,
+.comment-form input[type="url"]::placeholder,
+.comment-form textarea::placeholder {
+  color: #999;
+}
+
+.comment-form input[type="text"]:focus,
+.comment-form input[type="email"]:focus,
+.comment-form input[type="url"]:focus,
+.comment-form textarea:focus {
+  outline: none;
+  border-color: #1a0dab;
+  box-shadow: 0 0 0 3px rgba(26, 13, 171, 0.15);
+}
+
+body.dark .comment-form input[type="text"],
+body.dark .comment-form input[type="email"],
+body.dark .comment-form input[type="url"],
+body.dark .comment-form textarea {
+  background-color: #2b2b2b;
+  border-color: #444;
+  color: #d4d4d4;
+}
+
+body.dark .comment-form input[type="text"]::placeholder,
+body.dark .comment-form input[type="email"]::placeholder,
+body.dark .comment-form input[type="url"]::placeholder,
+body.dark .comment-form textarea::placeholder {
+  color: #777;
+}
+
+body.dark .comment-form input[type="text"]:focus,
+body.dark .comment-form input[type="email"]:focus,
+body.dark .comment-form input[type="url"]:focus,
+body.dark .comment-form textarea:focus {
+  border-color: #6db3f2;
+  box-shadow: 0 0 0 3px rgba(109, 179, 242, 0.2);
+}
+
+.comment-form button[type="submit"] {
+  align-self: flex-start;
+  font-family: inherit;
+  font-size: 0.95em;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #333;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.comment-form button[type="submit"]:hover {
+  background-color: #f0f0f0;
+}
+
+body.dark .comment-form button[type="submit"] {
+  background-color: #1a1a1a;
+  border-color: #d4d4d4;
+  color: #d4d4d4;
+}
+
+body.dark .comment-form button[type="submit"]:hover {
+  background-color: #2b2b2b;
+}
+
+/* ── Database Setup Alert ── */
+.database-setup-alert {
+  margin-top: 30px;
+  padding: 24px;
+  background-color: #fffde7;
+  border: 1px dashed #f9a825;
+  border-radius: 8px;
+  text-align: center;
+}
+
+body.dark .database-setup-alert {
+  background-color: #2a2617;
+  border-color: #ffd700;
+}
+
+.database-setup-alert p {
+  font-size: 0.95em;
+  color: #333;
+}
+
+body.dark .database-setup-alert p {
+  color: #e0d8b0;
+}
+
+/* ── Identity Note ── */
+.identity-note {
+  font-size: 0.85em;
+  color: #d35400;
+  font-style: italic;
+  margin: -8px 0 4px 0;
+}
+
+body.dark .identity-note {
+  color: #ffa726;
+}
+
+/* ── Form OR Divider ── */
+.comment-form-or {
+  text-align: center;
+  font-size: 0.78em;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  color: #888;
+  margin: -10px 0 -10px 0;
+}
+
+body.dark .comment-form-or {
+  color: #777;
+}
