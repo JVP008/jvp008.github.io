@@ -96,13 +96,17 @@
       const avatarColor = getAvatarColor(comment.author);
       const formattedDate = formatDate(comment.timestamp);
 
+      const authorHtml = comment.linkedin
+        ? `<a href="${escapeHTML(comment.linkedin)}" target="_blank" rel="noopener noreferrer" class="comment-author-link">${escapeHTML(comment.author)} 🔗</a>`
+        : `<span class="comment-author">${escapeHTML(comment.author)}</span>`;
+
       card.innerHTML = `
         <div class="comment-avatar" style="background-color: ${avatarColor};" aria-hidden="true">
           ${escapeHTML(initials)}
         </div>
         <div class="comment-content">
           <div class="comment-header">
-            <span class="comment-author">${escapeHTML(comment.author)}</span>
+            ${authorHtml}
             <span class="comment-date">${formattedDate}</span>
           </div>
           <div class="comment-body">${escapeHTML(comment.body)}</div>

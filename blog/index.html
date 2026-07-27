@@ -3,10 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>hello_world — Jayesh Vinod Patil</title>
-    <meta name="description" content="My first blog post." />
+    <title>Blog — Jayesh Vinod Patil</title>
+    <meta
+      name="description"
+      content="Jayesh Vinod Patil — blog posts on programming and thoughts."
+    />
     <link rel="stylesheet" href="../style.css" />
-    <script src="../blog-comments.js" defer></script>
   </head>
   <body>
     <button
@@ -58,35 +60,29 @@
         role="separator"
       ></div>
 
-      <p class="back"><a href="index.html">← blog</a> <span class="sep">·</span> <a href="../index.html">home</a></p>
+      <p class="back"><a href="../index.html">← home</a></p>
 
-      <article>
-        <h1 class="post-title">hello_world</h1>
-        <p class="post-date">july 2026</p>
-        <p>This is my very first blog post.</p>
-        <p>Here are a few things you should know :</p>
-        <p>
-          1. Even though i made this website using an 'LLM', I will not be
-          posting any blogs written by AI here. (ofc I will use Google for some
-          research).
-        </p>
+      <header>
+        <h1>Blog</h1>
+        <p class="tagline">thoughts, guides, and programming notes</p>
+      </header>
 
-        <p>
-          2. My blogs may have some grammar mistakes: <br />
-          sentences that do not make sense, gramatical mistakes (as its not my
-          first language), weird dashes like this one '—' etc.
-        </p>
-        <p>
-          3. I won't just be posting technical blogs; I'll write about random
-          things too.
-        </p>
-        <p>
-          4. I might post a blog after a week, a month, or even a year. I'm not
-          sure!
-        </p>
-        <hr />
-        <p>There's already enough AI-generated slop on Linkedin anyway!</p>
-      </article>
+      <hr />
+
+      <section id="blog-posts">
+        <ul class="blog-list">
+          <li>
+            <a href="hello-world.html">hello_world</a>
+            <span class="blog-date">— july 2026</span>
+          </li>
+          <li>
+            <a href="even-odd.html"
+              >most fundamental way to check even/odd</a
+            >
+            <span class="blog-date">— july 2026</span>
+          </li>
+        </ul>
+      </section>
     </div>
 
     <script>
@@ -143,7 +139,6 @@
               clientX = e.clientX;
             }
 
-            // Assumes .container is horizontally centered (margin: 0 auto)
             const rect = container.getBoundingClientRect();
             const center = rect.left + rect.width / 2;
             let newWidth = Math.abs(clientX - center) * 2;

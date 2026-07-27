@@ -679,6 +679,27 @@ body.dark .comment-author {
   color: #eee;
 }
 
+.comment-author-link {
+  font-weight: bold;
+  font-size: 0.95em;
+  color: #0a66c2;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.comment-author-link:hover {
+  text-decoration: underline;
+  color: #004182;
+}
+
+body.dark .comment-author-link {
+  color: #70b5f9;
+}
+
+body.dark .comment-author-link:hover {
+  color: #a0cffc;
+}
+
 .comment-date {
   font-size: 0.8em;
   color: #777;

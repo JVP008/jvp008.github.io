@@ -25,7 +25,7 @@ This guide will show you how to set up a **completely free** Google Sheets datab
 
 ## ✍️ Step 2: Set Up Google Apps Script
 1. In your Google Sheet menu bar, click on **Extensions** > **Apps Script**.
-2. Delete any code inside the script editor and copy-paste the following script (includes **duplicate blocker & mandatory Email/LinkedIn identity check**):
+2. Delete any code inside the script editor and copy-paste the following script:
 
 ```javascript
 // Google Apps Script code for blog comments database
@@ -42,6 +42,7 @@ function doGet(e) {
     var row = data[i];
     var rowPageId = row[1];
     var authorDisplayName = row[2];
+    var linkedinUrl = row[4]; // Column E is LinkedIn
     var message = row[5];
     var approved = row[6];
     var timestamp = row[0];
@@ -50,6 +51,7 @@ function doGet(e) {
     if (rowPageId === pageId && (approved === true || approved === "TRUE" || approved === "")) {
       comments.push({
         author: authorDisplayName,
+        linkedin: linkedinUrl,
         body: message,
         timestamp: new Date(timestamp).getTime()
       });
