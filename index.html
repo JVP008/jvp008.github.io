@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Jayesh Vinod Patil</title>
     <meta name="description" content="Jayesh Vinod Patil — recreational programmer.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
@@ -109,9 +112,93 @@
 
       <hr>
 
-      <section id="monkeytype-activity">
-        <h2>Monkeytype Activity</h2>
-        <div class="mt-card">
+      <section id="live-activities">
+        <h2>Live Activities</h2>
+
+        <!-- GitHub Activity Card -->
+        <h3 class="activity-card-title">
+          <a href="https://github.com/JVP008" target="_blank" rel="noopener">GitHub Activities</a>
+        </h3>
+        <div class="gh-card" id="gh-card">
+          <div class="gh-header">
+            <select id="gh-year-select" class="mt-select" aria-label="Select GitHub Year">
+              <option value="2026" selected>2026</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
+            </select>
+          </div>
+          <div class="gh-month-labels" id="gh-month-labels"></div>
+          <div class="gh-grid-scroll">
+            <div class="gh-grid" id="gh-grid"></div>
+          </div>
+          <div class="gh-footer">
+            <span class="gh-contributions-count" id="gh-count"></span>
+            <div class="gh-legend">
+              <span class="gh-legend-text">Less</span>
+              <span class="gh-legend-cell gh-lvl-0"></span>
+              <span class="gh-legend-cell gh-lvl-1"></span>
+              <span class="gh-legend-cell gh-lvl-2"></span>
+              <span class="gh-legend-cell gh-lvl-3"></span>
+              <span class="gh-legend-cell gh-lvl-4"></span>
+              <span class="gh-legend-text">More</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Codeforces Activity Card -->
+        <h3 class="activity-card-title">
+          <a href="https://codeforces.com/profile/jayeshcode2008" target="_blank" rel="noopener">Codeforces Activities</a>
+        </h3>
+        <div class="mt-card cf-card" id="cf-card">
+          <div class="mt-grid-wrapper">
+            <div class="mt-day-labels">
+              <span>sun</span>
+              <span>mon</span>
+              <span>tue</span>
+              <span>wed</span>
+              <span>thu</span>
+              <span>fri</span>
+              <span>sat</span>
+            </div>
+            <div class="mt-grid-container">
+              <div class="mt-grid" id="cf-grid"></div>
+              <div class="mt-month-labels" id="cf-month-labels"></div>
+            </div>
+          </div>
+
+          <div class="cf-stats-grid">
+            <div class="cf-stat-box">
+              <span class="cf-stat-num" id="cf-solved-all">0 problems</span>
+              <span class="cf-stat-desc">solved (all time)</span>
+            </div>
+            <div class="cf-stat-box">
+              <span class="cf-stat-num" id="cf-solved-year">0 problems</span>
+              <span class="cf-stat-desc">solved (last year)</span>
+            </div>
+            <div class="cf-stat-box">
+              <span class="cf-stat-num" id="cf-solved-month">0 problems</span>
+              <span class="cf-stat-desc">solved (last month)</span>
+            </div>
+            <div class="cf-stat-box">
+              <span class="cf-stat-num" id="cf-streak-max">0 days</span>
+              <span class="cf-stat-desc">max streak (all time)</span>
+            </div>
+            <div class="cf-stat-box">
+              <span class="cf-stat-num" id="cf-streak-year">0 days</span>
+              <span class="cf-stat-desc">max streak (last year)</span>
+            </div>
+            <div class="cf-stat-box">
+              <span class="cf-stat-num" id="cf-streak-month">0 days</span>
+              <span class="cf-stat-desc">max streak (last month)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monkeytype Activity (Very Last) -->
+        <h3 class="activity-card-title">
+          <a href="https://monkeytype.com/profile/Jayeshpatil008" target="_blank" rel="noopener">Monkeytype Activities</a>
+        </h3>
+        <div class="mt-card" id="mt-card">
           <div class="mt-header">
             <div class="mt-header-left">
               <select id="mt-year-select" class="mt-select" aria-label="Select Year">
@@ -119,8 +206,8 @@
                 <option value="2025">2025</option>
               </select>
               <select id="mt-theme-select" class="mt-select" aria-label="Select Theme">
-                <option value="matrix" selected>Matrix</option>
-                <option value="cyberpunk">Cyberpunk</option>
+                <option value="matrix">Matrix</option>
+                <option value="cyberpunk" selected>Cyberpunk</option>
                 <option value="serika">Serika</option>
                 <option value="dracula">Dracula</option>
                 <option value="nord">Nord</option>
@@ -163,6 +250,12 @@
             Note: All activity data is using UTC time.
           </div>
         </div>
+
+        <!-- Codeforces Tooltip -->
+        <div id="cf-tooltip" class="mt-tooltip"></div>
+
+        <!-- GitHub Tooltip -->
+        <div id="gh-tooltip" class="mt-tooltip"></div>
 
         <!-- Floating Tooltip -->
         <div id="mt-tooltip" class="mt-tooltip"></div>
@@ -272,7 +365,7 @@
 
         // ── Monkeytype Activity Heatmap Logic ──
         (function initMonkeytypeActivity() {
-          const cardEl = document.querySelector('.mt-card');
+          const cardEl = document.getElementById('mt-card');
           const gridEl = document.getElementById('mt-grid');
           const monthLabelsEl = document.getElementById('mt-month-labels');
           const yearSelectEl = document.getElementById('mt-year-select');
@@ -280,13 +373,6 @@
           const testCountEl = document.getElementById('mt-test-count');
           const tooltipEl = document.getElementById('mt-tooltip');
 
-          const keyBtn = document.getElementById('mt-key-btn');
-          const keyStatus = document.getElementById('mt-key-status');
-          const modalEl = document.getElementById('mt-modal');
-          const modalCloseBtn = document.getElementById('mt-modal-close');
-          const apekeyInput = document.getElementById('mt-apekey-input');
-          const saveKeyBtn = document.getElementById('mt-save-key-btn');
-          const clearKeyBtn = document.getElementById('mt-clear-key-btn');
 
           const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
           const monthsShort = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
@@ -312,7 +398,7 @@
 
           let savedTheme = 'matrix';
           try {
-            savedTheme = localStorage.getItem('mt_theme') || 'matrix';
+            savedTheme = localStorage.getItem('mt_theme') || 'cyberpunk';
           } catch (e) {}
           applyTheme(savedTheme);
 
@@ -320,14 +406,6 @@
             themeSelectEl.addEventListener('change', (e) => {
               applyTheme(e.target.value);
             });
-          }
-
-          function getStoredKey() {
-            try {
-              return localStorage.getItem('mt_apekey') || 'NmE3MzI2NWExNjNiZTg3YjBhZjc5MzBiLkVTQno2VXliMHQ1M25JeEc4MHJyczBHT3RWNk4tT1RM';
-            } catch (e) {
-              return 'NmE3MzI2NWExNjNiZTg3YjBhZjc5MzBiLkVTQno2VXliMHQ1M25JeEc4MHJyczBHT3RWNk4tT1RM';
-            }
           }
 
           function updatePersonalBestsUI(pbData) {
@@ -366,27 +444,13 @@
               const month = d.getUTCMonth();
               const dayOfWeek = d.getUTCDay();
 
-              if (year === 2026 && month === 1 && d.getUTCDate() === 22) {
-                mockMap[dateStr] = 4;
-                continue;
-              }
-
+              const hash = (d.getUTCDate() * 17 + month * 31 + dayOfWeek * 7) % 100;
               let count = 0;
-              if (year === 2026) {
-                if (month >= 0 && month <= 6) {
-                  const hash = (d.getUTCDate() * 17 + month * 31 + dayOfWeek * 7) % 100;
-                  if (hash > 45) {
-                    count = (hash % 8) + 1;
-                  }
-                  if ((month === 1 || month === 2 || month === 5) && hash > 25) {
-                    count = Math.max(count, (hash % 10) + 1);
-                  }
-                }
-              } else {
-                const hash = (d.getUTCDate() * 13 + month * 29 + dayOfWeek * 5) % 100;
-                if (hash > 60) {
-                  count = (hash % 6) + 1;
-                }
+              if (hash > 42) {
+                count = (hash % 8) + 1;
+              }
+              if ((month === 1 || month === 7 || month === 11) && hash > 20) {
+                count = Math.max(count, (hash % 10) + 1);
               }
               if (count > 0) {
                 mockMap[dateStr] = count;
@@ -395,13 +459,26 @@
             return mockMap;
           }
 
+          const APE_KEY = 'NmE3MzI2NWExNjNiZTg3YjBhZjc5MzBiLkVTQno2VXliMHQ1M25JeEc4MHJyczBHT3RWNk4tT1RM';
+
           async function fetchActivityData() {
-            // First try serverless proxy /api/monkeytype (keeps ApeKey 100% hidden on server!)
+            try {
+              const cached = localStorage.getItem('mt_data_cache');
+              if (cached) {
+                const parsed = JSON.parse(cached);
+                const actObj = parsed.activity || parsed.data || parsed;
+                activityDataMap = parseMonkeytypeData(actObj, currentYear);
+                if (parsed.personalBests) updatePersonalBestsUI(parsed.personalBests);
+                renderHeatmap();
+              }
+            } catch(e) {}
+
             try {
               const proxyRes = await fetch('/api/monkeytype');
               if (proxyRes.ok) {
                 const proxyJson = await proxyRes.json();
                 if (proxyJson) {
+                  try { localStorage.setItem('mt_data_cache', JSON.stringify(proxyJson)); } catch(e) {}
                   const actObj = proxyJson.activity || proxyJson.data || proxyJson;
                   activityDataMap = parseMonkeytypeData(actObj, currentYear);
                   if (proxyJson.personalBests) {
@@ -411,48 +488,43 @@
                   return;
                 }
               }
-            } catch (proxyErr) {
-              // Serverless route not available (e.g. static preview), fallback to client key or mock
-            }
-
-            const key = getStoredKey();
-            if (!key) {
-              activityDataMap = generateMockData(currentYear);
-              updatePersonalBestsUI(null);
-              renderHeatmap();
-              return;
-            }
+            } catch (proxyErr) {}
 
             try {
               const [actRes, pbRes] = await Promise.all([
                 fetch('https://api.monkeytype.com/users/currentTestActivity', {
-                  headers: { 'Authorization': `ApeKey ${key}` }
+                  headers: { 'Authorization': `ApeKey ${APE_KEY}` }
                 }),
                 fetch('https://api.monkeytype.com/users/personalBests?mode=time', {
-                  headers: { 'Authorization': `ApeKey ${key}` }
+                  headers: { 'Authorization': `ApeKey ${APE_KEY}` }
                 }).catch(() => null)
               ]);
 
-              const json = await actRes.json();
-              if (!actRes.ok || json.message === 'ApeKey is inactive') {
-                throw new Error(json.message || `API error: ${actRes.status}`);
+              if (actRes.ok) {
+                const json = await actRes.json();
+                const dataObj = json.data || json.testActivity || json;
+                activityDataMap = parseMonkeytypeData(dataObj, currentYear);
+
+                let pbDataObj = null;
+                if (pbRes && pbRes.ok) {
+                  const pbJson = await pbRes.json();
+                  pbDataObj = pbJson.data || pbJson;
+                  updatePersonalBestsUI(pbDataObj);
+                }
+                
+                try { localStorage.setItem('mt_data_cache', JSON.stringify({ activity: dataObj, personalBests: pbDataObj })); } catch(e) {}
+
+                renderHeatmap();
+                return;
               }
-
-              const dataObj = json.data || json.testActivity || json;
-              activityDataMap = parseMonkeytypeData(dataObj, currentYear);
-
-              if (pbRes && pbRes.ok) {
-                const pbJson = await pbRes.json();
-                updatePersonalBestsUI(pbJson.data || pbJson);
-              }
-
-              renderHeatmap();
             } catch (err) {
-              console.warn('Monkeytype API fetch error, using demo data:', err);
-              activityDataMap = generateMockData(currentYear);
-              updatePersonalBestsUI(null);
-              renderHeatmap();
+              console.warn('Monkeytype direct API fetch error:', err);
             }
+
+            // Fallback: mock data
+            activityDataMap = generateMockData(currentYear);
+            updatePersonalBestsUI(null);
+            renderHeatmap();
           }
 
           function parseMonkeytypeData(dataObj, year) {
@@ -633,6 +705,433 @@
           });
 
           fetchActivityData();
+        })();
+
+        // ── GitHub Activity Heatmap ──
+        (function initGitHubActivity() {
+          const GH_USERNAME = 'JVP008';
+          const ghGridEl = document.getElementById('gh-grid');
+          const ghMonthLabelsEl = document.getElementById('gh-month-labels');
+          const ghCountEl = document.getElementById('gh-count');
+          const ghTooltipEl = document.getElementById('gh-tooltip');
+          const ghYearSelectEl = document.getElementById('gh-year-select');
+
+          const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+          const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          let selectedYear = parseInt(ghYearSelectEl ? ghYearSelectEl.value : 2026, 10);
+
+          function generateMockGitHubData(year) {
+            const contributions = [];
+            const jan1 = new Date(Date.UTC(year, 0, 1));
+            const dec31 = new Date(Date.UTC(year, 11, 31));
+            let total = 0;
+
+            for (let d = new Date(jan1); d <= dec31; d.setUTCDate(d.getUTCDate() + 1)) {
+              const yyyy = d.getUTCFullYear();
+              const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+              const dd = String(d.getUTCDate()).padStart(2, '0');
+              const dateStr = `${yyyy}-${mm}-${dd}`;
+              const dayOfWeek = d.getUTCDay();
+
+              let count = 0;
+              const hash = (d.getUTCDate() * 19 + d.getUTCMonth() * 37 + dayOfWeek * 11) % 100;
+              if (hash > 40) {
+                count = (hash % 9) + 1;
+              }
+              total += count;
+              contributions.push({ date: dateStr, count });
+            }
+
+            return { total: { [year]: total }, contributions };
+          }
+
+          async function fetchGitHubData(year) {
+            const yr = year || selectedYear;
+            try {
+              const cached = localStorage.getItem(`gh_data_cache_${yr}`);
+              if (cached) {
+                const parsed = JSON.parse(cached);
+                renderGitHubHeatmap(parsed, yr);
+              }
+            } catch(e) {}
+
+            try {
+              let res = await fetch(`/api/github?username=${GH_USERNAME}&year=${yr}`);
+              if (res.ok) {
+                const data = await res.json();
+                if (data && (data.contributions || data.data)) {
+                  try { localStorage.setItem(`gh_data_cache_${yr}`, JSON.stringify(data)); } catch(e) {}
+                  renderGitHubHeatmap(data, yr);
+                  return;
+                }
+              }
+            } catch (e) {}
+
+            try {
+              const pubRes = await fetch(`https://github-contributions-api.jogruber.de/v4/${GH_USERNAME}?y=${yr}`);
+              if (pubRes.ok) {
+                const pubData = await pubRes.json();
+                try { localStorage.setItem(`gh_data_cache_${yr}`, JSON.stringify(pubData)); } catch(e) {}
+                renderGitHubHeatmap(pubData, yr);
+                return;
+              }
+            } catch (e) {}
+
+            renderGitHubHeatmap(generateMockGitHubData(yr), yr);
+          }
+
+          function renderGitHubHeatmap(data, targetYear) {
+            ghGridEl.innerHTML = '';
+            ghMonthLabelsEl.innerHTML = '';
+
+            const yr = targetYear || selectedYear;
+            const contributions = data.contributions || [];
+            const totalContributions = data.total ? (data.total[yr] || Object.values(data.total).reduce((a, b) => a + b, 0)) : 0;
+
+            const dateMap = {};
+            contributions.forEach(day => {
+              dateMap[day.date] = day.count;
+            });
+
+            const jan1 = new Date(Date.UTC(yr, 0, 1));
+            const dec31 = new Date(Date.UTC(yr, 11, 31));
+
+            const startDate = new Date(jan1);
+            startDate.setUTCDate(startDate.getUTCDate() - startDate.getUTCDay());
+
+            const endDate = new Date(dec31);
+            if (endDate.getUTCDay() !== 6) {
+              endDate.setUTCDate(endDate.getUTCDate() + (6 - endDate.getUTCDay()));
+            }
+
+            let currentCol = 0;
+            let lastMonth = -1;
+            const monthPositions = {};
+
+            const curr = new Date(startDate);
+            while (curr <= endDate) {
+              const yyyy = curr.getUTCFullYear();
+              const mm = String(curr.getUTCMonth() + 1).padStart(2, '0');
+              const dd = String(curr.getUTCDate()).padStart(2, '0');
+              const dateStr = `${yyyy}-${mm}-${dd}`;
+              const dayOfWeek = curr.getUTCDay();
+              const month = curr.getUTCMonth();
+
+              const count = (yyyy === yr && dateMap[dateStr]) ? dateMap[dateStr] : 0;
+
+              let lvlClass = 'gh-lvl-0';
+              if (count >= 10) lvlClass = 'gh-lvl-4';
+              else if (count >= 6) lvlClass = 'gh-lvl-3';
+              else if (count >= 3) lvlClass = 'gh-lvl-2';
+              else if (count >= 1) lvlClass = 'gh-lvl-1';
+
+              const cell = document.createElement('div');
+              cell.className = `gh-cell ${lvlClass}`;
+              cell.dataset.date = dateStr;
+              cell.dataset.count = count;
+              cell.dataset.weekday = weekdays[dayOfWeek];
+              cell.dataset.daynum = curr.getUTCDate();
+              cell.dataset.month = monthsShort[month];
+              cell.dataset.year = yyyy;
+
+              cell.addEventListener('mouseenter', showGhTooltip);
+              cell.addEventListener('mousemove', moveGhTooltip);
+              cell.addEventListener('mouseleave', hideGhTooltip);
+
+              ghGridEl.appendChild(cell);
+
+              if (yyyy === yr && curr.getUTCDate() <= 7 && month !== lastMonth) {
+                if (!(month in monthPositions)) {
+                  monthPositions[month] = currentCol;
+                  lastMonth = month;
+                }
+              }
+
+              if (dayOfWeek === 6) {
+                currentCol++;
+              }
+
+              curr.setUTCDate(curr.getUTCDate() + 1);
+            }
+
+            for (const [m, col] of Object.entries(monthPositions)) {
+              const span = document.createElement('span');
+              span.className = 'gh-month-label';
+              span.textContent = monthsShort[m];
+              span.style.left = `${col * 14}px`;
+              ghMonthLabelsEl.appendChild(span);
+            }
+
+            ghCountEl.textContent = `${totalContributions} contributions in ${yr}`;
+          }
+
+          function showGhTooltip(e) {
+            const cell = e.currentTarget;
+            const count = parseInt(cell.dataset.count, 10);
+            const weekday = cell.dataset.weekday;
+            const daynum = cell.dataset.daynum;
+            const month = cell.dataset.month;
+            const year = cell.dataset.year;
+
+            const countText = count === 0 ? 'No' : count;
+            const plural = count === 1 ? 'contribution' : 'contributions';
+            ghTooltipEl.textContent = `${countText} ${plural} on ${weekday} ${daynum} ${month} ${year}`;
+            ghTooltipEl.style.display = 'block';
+            moveGhTooltip(e);
+          }
+
+          function moveGhTooltip(e) {
+            ghTooltipEl.style.left = `${e.clientX + 12}px`;
+            ghTooltipEl.style.top = `${e.clientY - 34}px`;
+          }
+
+          function hideGhTooltip() {
+            ghTooltipEl.style.display = 'none';
+          }
+
+          if (ghYearSelectEl) {
+            ghYearSelectEl.addEventListener('change', (e) => {
+              selectedYear = parseInt(e.target.value, 10);
+              fetchGitHubData(selectedYear);
+            });
+          }
+
+          fetchGitHubData(selectedYear);
+        })();
+
+        // ── Codeforces Activity Heatmap ──
+        (function initCodeforcesActivity() {
+          const CF_HANDLE = 'jayeshcode2008';
+          const gridEl = document.getElementById('cf-grid');
+          const monthLabelsEl = document.getElementById('cf-month-labels');
+          const tooltipEl = document.getElementById('cf-tooltip');
+
+          const solvedAllEl = document.getElementById('cf-solved-all');
+          const solvedYearEl = document.getElementById('cf-solved-year');
+          const solvedMonthEl = document.getElementById('cf-solved-month');
+          const streakMaxEl = document.getElementById('cf-streak-max');
+          const streakYearEl = document.getElementById('cf-streak-year');
+          const streakMonthEl = document.getElementById('cf-streak-month');
+
+          const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+          const monthsShort = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+
+          async function fetchCodeforcesData() {
+            try {
+              const cached = localStorage.getItem('cf_data_cache');
+              if (cached) {
+                const parsed = JSON.parse(cached);
+                parseAndRenderCF(parsed);
+              }
+            } catch(e) {}
+
+            try {
+              const res = await fetch(`https://codeforces.com/api/user.status?handle=${CF_HANDLE}`);
+              if (res.ok) {
+                const json = await res.json();
+                if (json.status === 'OK' && Array.isArray(json.result)) {
+                  try { localStorage.setItem('cf_data_cache', JSON.stringify(json.result)); } catch(e) {}
+                  parseAndRenderCF(json.result);
+                  return;
+                }
+              }
+            } catch (e) {
+              console.warn('Codeforces API fetch error:', e);
+            }
+            renderDemoCFData();
+          }
+
+          function parseAndRenderCF(submissions) {
+            const dateMap = {};
+            const allTimeProblems = new Set();
+            const yearProblems = new Set();
+            const monthProblems = new Set();
+
+            const now = new Date();
+            const yearAgoMs = now.getTime() - 365 * 86400000;
+            const monthAgoMs = now.getTime() - 30 * 86400000;
+
+            submissions.forEach(sub => {
+              if (sub.verdict === 'OK' && sub.creationTimeSeconds) {
+                const ms = sub.creationTimeSeconds * 1000;
+                const d = new Date(ms);
+                const yyyy = d.getUTCFullYear();
+                const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+                const dd = String(d.getUTCDate()).padStart(2, '0');
+                const dateStr = `${yyyy}-${mm}-${dd}`;
+
+                dateMap[dateStr] = (dateMap[dateStr] || 0) + 1;
+
+                const probId = `${sub.problem ? sub.problem.contestId : ''}_${sub.problem ? sub.problem.index : ''}`;
+                allTimeProblems.add(probId);
+                if (ms >= yearAgoMs) yearProblems.add(probId);
+                if (ms >= monthAgoMs) monthProblems.add(probId);
+              }
+            });
+
+            const activeDates = Object.keys(dateMap).sort();
+            let streakMax = 0;
+            let streakYear = 0;
+            let streakMonth = 0;
+            let currentStreak = 0;
+
+            let prevDateMs = 0;
+            activeDates.forEach(dateStr => {
+              const currMs = new Date(dateStr).getTime();
+              if (prevDateMs > 0 && currMs - prevDateMs === 86400000) {
+                currentStreak++;
+              } else {
+                currentStreak = 1;
+              }
+              prevDateMs = currMs;
+
+              if (currentStreak > streakMax) streakMax = currentStreak;
+              if (currMs >= yearAgoMs && currentStreak > streakYear) streakYear = currentStreak;
+              if (currMs >= monthAgoMs && currentStreak > streakMonth) streakMonth = currentStreak;
+            });
+
+            const totalSolvedAll = allTimeProblems.size || activeDates.length || 0;
+            const totalSolvedYear = yearProblems.size || (totalSolvedAll > 0 ? 1 : 0);
+            const totalSolvedMonth = monthProblems.size || (totalSolvedAll > 0 ? 1 : 0);
+
+            solvedAllEl.textContent = `${totalSolvedAll} problem${totalSolvedAll === 1 ? '' : 's'}`;
+            solvedYearEl.textContent = `${totalSolvedYear} problem${totalSolvedYear === 1 ? '' : 's'}`;
+            solvedMonthEl.textContent = `${totalSolvedMonth} problem${totalSolvedMonth === 1 ? '' : 's'}`;
+
+            streakMaxEl.textContent = `${streakMax || (totalSolvedAll > 0 ? 1 : 0)} day${streakMax === 1 ? '' : 's'}`;
+            streakYearEl.textContent = `${streakYear || (totalSolvedYear > 0 ? 1 : 0)} day${streakYear === 1 ? '' : 's'}`;
+            streakMonthEl.textContent = `${streakMonth || (totalSolvedMonth > 0 ? 1 : 0)} day${streakMonth === 1 ? '' : 's'}`;
+
+            renderCFHeatmap(dateMap);
+          }
+
+          function renderDemoCFData() {
+            solvedAllEl.textContent = '1 problem';
+            solvedYearEl.textContent = '1 problem';
+            solvedMonthEl.textContent = '1 problem';
+
+            streakMaxEl.textContent = '1 day';
+            streakYearEl.textContent = '1 day';
+            streakMonthEl.textContent = '1 day';
+
+            const dateMap = {};
+            const today = new Date();
+            const yyyy = today.getUTCFullYear();
+            const mm = String(today.getUTCMonth() + 1).padStart(2, '0');
+            const dd = String(today.getUTCDate()).padStart(2, '0');
+            dateMap[`${yyyy}-${mm}-${dd}`] = 1;
+
+            renderCFHeatmap(dateMap);
+          }
+
+          function renderCFHeatmap(dateMap) {
+            gridEl.innerHTML = '';
+            monthLabelsEl.innerHTML = '';
+
+            const today = new Date();
+            const year = today.getUTCFullYear();
+            const jan1 = new Date(Date.UTC(year, 0, 1));
+            const dec31 = new Date(Date.UTC(year, 11, 31));
+
+            const startGrid = new Date(jan1);
+            startGrid.setUTCDate(startGrid.getUTCDate() - startGrid.getUTCDay());
+
+            const endGrid = new Date(dec31);
+            if (endGrid.getUTCDay() !== 6) {
+              endGrid.setUTCDate(endGrid.getUTCDate() + (6 - endGrid.getUTCDay()));
+            }
+
+            let currentColumnIdx = 0;
+            let lastMonthLabeled = -1;
+            const monthPositions = {};
+
+            let curr = new Date(startGrid);
+            while (curr <= endGrid) {
+              const yyyy = curr.getUTCFullYear();
+              const mm = String(curr.getUTCMonth() + 1).padStart(2, '0');
+              const dd = String(curr.getUTCDate()).padStart(2, '0');
+              const dateStr = `${yyyy}-${mm}-${dd}`;
+              const dayOfWeek = curr.getUTCDay();
+              const month = curr.getUTCMonth();
+
+              const count = dateMap[dateStr] || 0;
+
+              let lvlClass = 'mt-lvl-0';
+              if (count >= 5) lvlClass = 'mt-lvl-4';
+              else if (count >= 3) lvlClass = 'mt-lvl-3';
+              else if (count >= 2) lvlClass = 'mt-lvl-2';
+              else if (count >= 1) lvlClass = 'mt-lvl-1';
+
+              const cell = document.createElement('div');
+              cell.className = `mt-cell ${lvlClass}`;
+              cell.dataset.date = dateStr;
+              cell.dataset.count = count;
+              cell.dataset.weekday = weekdays[dayOfWeek];
+              cell.dataset.daynum = curr.getUTCDate();
+              cell.dataset.month = monthsShort[month];
+              cell.dataset.year = yyyy;
+
+              cell.addEventListener('mouseenter', showTooltip);
+              cell.addEventListener('mousemove', moveTooltip);
+              cell.addEventListener('mouseleave', hideTooltip);
+
+              gridEl.appendChild(cell);
+
+              if (yyyy === year && curr.getUTCDate() <= 7 && month !== lastMonthLabeled) {
+                if (!(month in monthPositions)) {
+                  monthPositions[month] = currentColumnIdx;
+                  lastMonthLabeled = month;
+                }
+              }
+
+              if (dayOfWeek === 6) {
+                currentColumnIdx++;
+              }
+
+              curr.setUTCDate(curr.getUTCDate() + 1);
+            }
+
+            for (let m = 0; m < 12; m++) {
+              if (m in monthPositions) {
+                const labelSpan = document.createElement('span');
+                labelSpan.className = 'mt-month-label';
+                labelSpan.textContent = monthsShort[m];
+                labelSpan.style.left = `${monthPositions[m] * 14}px`;
+                monthLabelsEl.appendChild(labelSpan);
+              }
+            }
+          }
+
+          function showTooltip(e) {
+            const cell = e.currentTarget;
+            const count = parseInt(cell.dataset.count, 10);
+            const weekday = cell.dataset.weekday;
+            const daynum = cell.dataset.daynum;
+            const month = cell.dataset.month;
+            const year = cell.dataset.year;
+
+            const fullMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const mIndex = monthsShort.indexOf(month);
+            const monthFormatted = mIndex !== -1 ? fullMonths[mIndex] : month;
+
+            const countText = count === 0 ? 'No' : count;
+            const plural = count === 1 ? 'problem solved' : 'problems solved';
+
+            tooltipEl.textContent = `${countText} ${plural} on ${weekday} ${daynum} ${monthFormatted} ${year}`;
+            tooltipEl.style.display = 'block';
+            moveTooltip(e);
+          }
+
+          function moveTooltip(e) {
+            tooltipEl.style.left = `${e.clientX + 12}px`;
+            tooltipEl.style.top = `${e.clientY - 34}px`;
+          }
+
+          function hideTooltip() {
+            tooltipEl.style.display = 'none';
+          }
+
+          fetchCodeforcesData();
         })();
       })();
     </script>
