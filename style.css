@@ -916,3 +916,402 @@ body.dark .identity-note {
 body.dark .comment-form-or {
   color: #777;
 }
+
+/* ── Monkeytype Activity Heatmap ── */
+#monkeytype-activity {
+  margin-top: 40px;
+  font-family: "Roboto Mono", "Fira Code", "Courier New", monospace;
+}
+
+.mt-card {
+  background-color: #2c2e31;
+  color: #d1d0c5;
+  border-radius: 8px;
+  padding: 20px 24px 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  font-size: 13px;
+  user-select: none;
+  cursor: url("arrowhead-rounded-outline.svg") 5 3, auto;
+}
+
+body.dark .mt-card {
+  background-color: #1e1f21;
+  border: 1px solid #2e3034;
+}
+
+.mt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.mt-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mt-select {
+  background-color: #242528;
+  color: #d1d0c5;
+  border: 1px solid #3c3e42;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  cursor: url("hand-pointer.svg") 8 1, pointer !important;
+  transition: border-color 0.2s;
+}
+
+.mt-select:hover {
+  border-color: #666;
+}
+
+.mt-test-count {
+  color: #646669;
+  font-size: 12px;
+}
+
+.mt-key-btn {
+  background: transparent;
+  border: 1px solid #3c3e42;
+  color: #646669;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-family: inherit;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: url("hand-pointer.svg") 8 1, pointer !important;
+  transition: all 0.2s;
+}
+
+.mt-key-btn:hover {
+  color: #d1d0c5;
+  border-color: #d1d0c5;
+}
+
+.mt-key-btn.active {
+  color: #da3363;
+  border-color: #da3363;
+}
+
+.mt-header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mt-legend-text {
+  color: #646669;
+  font-size: 12px;
+}
+
+.mt-legend-cells {
+  display: flex;
+  gap: 3px;
+}
+
+/* Customizable Theme Presets - Matrix is default */
+.mt-card[data-mt-theme="matrix"], .mt-card {
+  --mt-lvl-1: #194a24;
+  --mt-lvl-2: #227034;
+  --mt-lvl-3: #2b9643;
+  --mt-lvl-4: #00ff66;
+  --mt-accent: #00ff66;
+}
+
+.mt-card[data-mt-theme="cyberpunk"] {
+  --mt-lvl-1: #59253d;
+  --mt-lvl-2: #8c264d;
+  --mt-lvl-3: #bf265d;
+  --mt-lvl-4: #da3363;
+  --mt-accent: #da3363;
+}
+
+.mt-card[data-mt-theme="serika"] {
+  --mt-lvl-1: #4c4424;
+  --mt-lvl-2: #806f2a;
+  --mt-lvl-3: #b39b2e;
+  --mt-lvl-4: #e2b714;
+  --mt-accent: #e2b714;
+}
+
+.mt-card[data-mt-theme="dracula"] {
+  --mt-lvl-1: #48386b;
+  --mt-lvl-2: #6c4d9e;
+  --mt-lvl-3: #9362d1;
+  --mt-lvl-4: #bd93f9;
+  --mt-accent: #bd93f9;
+}
+
+.mt-card[data-mt-theme="nord"] {
+  --mt-lvl-1: #2e4359;
+  --mt-lvl-2: #3e5c7a;
+  --mt-lvl-3: #527b9c;
+  --mt-lvl-4: #88c0d0;
+  --mt-accent: #88c0d0;
+}
+
+.mt-card[data-mt-theme="sakura"] {
+  --mt-lvl-1: #5e2938;
+  --mt-lvl-2: #913b52;
+  --mt-lvl-3: #c44d6c;
+  --mt-lvl-4: #ff6584;
+  --mt-accent: #ff6584;
+}
+
+.mt-pb-badge {
+  background-color: #242528;
+  color: var(--mt-accent, #00ff66);
+  border: 1px solid #3c3e42;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.mt-cell {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+  display: inline-block;
+  transition: transform 0.15s ease, outline 0.15s ease, background-color 0.2s ease;
+}
+
+.mt-lvl-0 { background-color: #242528; }
+.mt-lvl-1 { background-color: var(--mt-lvl-1, #194a24); }
+.mt-lvl-2 { background-color: var(--mt-lvl-2, #227034); }
+.mt-lvl-3 { background-color: var(--mt-lvl-3, #2b9643); }
+.mt-lvl-4 { background-color: var(--mt-lvl-4, #00ff66); }
+
+.mt-grid-wrapper {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.mt-grid-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.mt-grid-wrapper::-webkit-scrollbar-thumb {
+  background: #3c3e42;
+  border-radius: 3px;
+}
+
+.mt-day-labels {
+  display: grid;
+  grid-template-rows: repeat(7, 11px);
+  row-gap: 3px;
+  color: #646669;
+  font-size: 10px;
+  text-align: right;
+  padding-top: 1px;
+  min-width: 52px;
+  flex-shrink: 0;
+}
+
+.mt-day-labels span {
+  line-height: 11px;
+  visibility: hidden;
+  white-space: nowrap;
+}
+
+/* Only display Monday, Wednesday, Friday like Monkeytype UI screenshot */
+.mt-day-labels span:nth-child(2),
+.mt-day-labels span:nth-child(4),
+.mt-day-labels span:nth-child(6) {
+  visibility: visible;
+}
+
+.mt-grid-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mt-grid {
+  display: grid;
+  grid-template-rows: repeat(7, 11px);
+  grid-auto-flow: column;
+  grid-auto-columns: 11px;
+  gap: 3px;
+}
+
+.mt-grid .mt-cell {
+  cursor: pointer;
+}
+
+.mt-grid .mt-cell:hover {
+  transform: scale(1.25);
+  z-index: 10;
+  outline: 1px solid #fff;
+}
+
+.mt-grid .mt-cell.selected {
+  outline: 2px solid #fff;
+  outline-offset: 1px;
+}
+
+.mt-month-labels {
+  display: flex;
+  position: relative;
+  height: 14px;
+  color: #646669;
+  font-size: 11px;
+}
+
+.mt-month-label {
+  position: absolute;
+}
+
+.mt-footer {
+  text-align: center;
+  color: #646669;
+  font-size: 11px;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Floating Tooltip */
+.mt-tooltip {
+  position: fixed;
+  z-index: 9999;
+  background-color: #111213;
+  color: #d1d0c5;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: "Roboto Mono", "Fira Code", monospace;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  white-space: nowrap;
+  display: none;
+  border: 1px solid #333;
+}
+
+/* ApeKey Modal */
+.mt-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.mt-modal.show {
+  display: flex;
+}
+
+.mt-modal-content {
+  background-color: #2c2e31;
+  color: #d1d0c5;
+  border: 1px solid #3c3e42;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 480px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  font-family: "Roboto Mono", "Fira Code", monospace;
+}
+
+.mt-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.mt-modal-header h3 {
+  font-size: 16px;
+  color: #e2b714;
+}
+
+.mt-modal-close {
+  background: none;
+  border: none;
+  color: #646669;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.mt-modal-close:hover {
+  color: #d1d0c5;
+}
+
+.mt-modal-desc {
+  font-size: 12px;
+  color: #a0a0a0;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.mt-input-group {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.mt-input-group input {
+  flex: 1;
+  background: #1c1d1f;
+  border: 1px solid #3c3e42;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.mt-input-group button {
+  background: #da3363;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-weight: bold;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.mt-input-group button:hover {
+  background: #bf265d;
+}
+
+.mt-clear-btn {
+  background: transparent;
+  border: 1px solid #444;
+  color: #888;
+  width: 100%;
+  padding: 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.mt-clear-btn:hover {
+  color: #d1d0c5;
+  border-color: #666;
+}
+
