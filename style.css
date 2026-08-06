@@ -1505,3 +1505,120 @@ body.dark .mt-card {
   color: #8b949e;
 }
 
+/* ── Live Visitor Counter (Bottom Left Corner) ── */
+.live-visitor-counter {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  z-index: 9999;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 13px;
+  border-radius: 20px;
+  font-family: "Fira Code", monospace, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #24292f;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background 0.3s, color 0.3s, border-color 0.3s, transform 0.2s ease, box-shadow 0.2s ease;
+  user-select: none;
+}
+
+.live-visitor-counter:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+body.dark .live-visitor-counter {
+  color: #e6edf3;
+  background: rgba(22, 27, 34, 0.88);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+body.dark .live-visitor-counter:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+}
+
+.visitor-pulse-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #10b981;
+  border-radius: 50%;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.visitor-pulse-dot::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  background-color: rgba(16, 185, 129, 0.6);
+  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.visitor-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+
+.visitor-text {
+  font-size: 12px;
+  color: #6e7781;
+  text-transform: lowercase;
+}
+
+body.dark .visitor-text {
+  color: #8b949e;
+}
+
+.visitor-count {
+  font-weight: 700;
+  color: #059669;
+  letter-spacing: -0.2px;
+}
+
+body.dark .visitor-count {
+  color: #34d399;
+}
+
+@media (max-width: 480px) {
+  .live-visitor-counter {
+    bottom: 12px;
+    left: 12px;
+    padding: 5px 10px;
+    font-size: 12px;
+    gap: 5px;
+  }
+  .visitor-icon {
+    width: 13px;
+    height: 13px;
+  }
+  .visitor-text {
+    font-size: 11px;
+  }
+}
+
+
