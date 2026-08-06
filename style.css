@@ -9,6 +9,11 @@
   box-sizing: border-box;
 }
 
+html {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 /* ── Custom Cursor ── */
 html,
 body {
@@ -42,9 +47,22 @@ body {
   line-height: 1.6;
   color: #333;
   background: #fff;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
   transition:
     background 0.3s,
     color 0.3s;
+}
+
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+
+pre, code {
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 ::selection {
@@ -78,9 +96,11 @@ body.dark #theme-toggle {
 /* ── Container (centered like Karpathy) ── */
 .container {
   max-width: 850px;
+  width: 100%;
   margin: 0 auto;
   padding: 60px 20px 80px;
   position: relative;
+  box-sizing: border-box;
 }
 
 /* ── Subtle decorative vertical dashed line ── */
@@ -159,6 +179,11 @@ body.dark .tagline {
 /* ── Nav links ── */
 nav {
   font-size: 1em;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 12px;
 }
 
 nav a {
@@ -989,7 +1014,9 @@ body.dark .mt-card {
 .mt-header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  max-width: 100%;
 }
 
 .mt-select {
@@ -1527,6 +1554,8 @@ body.dark .mt-card {
   -webkit-backdrop-filter: blur(8px);
   transition: background 0.3s, color 0.3s, border-color 0.3s, transform 0.2s ease, box-shadow 0.2s ease;
   user-select: none;
+  max-width: calc(100vw - 32px);
+  box-sizing: border-box;
 }
 
 .live-visitor-counter:hover {
@@ -1594,6 +1623,25 @@ body.dark .visitor-text {
   color: #8b949e;
 }
 
+.visitor-stat {
+  font-size: 12px;
+  color: #57606a;
+}
+
+body.dark .visitor-stat {
+  color: #8b949e;
+}
+
+.visitor-divider {
+  color: #8c959f;
+  font-size: 12px;
+  user-select: none;
+}
+
+body.dark .visitor-divider {
+  color: #6e7681;
+}
+
 .visitor-count {
   font-weight: 700;
   color: #059669;
@@ -1604,20 +1652,94 @@ body.dark .visitor-count {
   color: #34d399;
 }
 
+@media (max-width: 600px) {
+  .container {
+    padding: 30px 14px 60px;
+  }
+  .container::before {
+    display: none;
+  }
+  .resizer-handle {
+    display: none;
+  }
+  .mt-card,
+  .gh-card {
+    padding: 14px 12px 12px;
+  }
+  .mt-header {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .mt-select {
+    padding: 4px 6px;
+    font-size: 12px;
+  }
+  .mt-pb-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+  .mt-test-count {
+    font-size: 11px;
+  }
+  .cf-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px 8px;
+    margin-top: 14px;
+    padding-top: 12px;
+  }
+  .cf-stat-num {
+    font-size: 11.5px;
+  }
+  .cf-stat-desc {
+    font-size: 11px;
+  }
+  .gh-footer {
+    gap: 6px;
+  }
+  .gh-contributions-count {
+    font-size: 11px;
+  }
+}
+
 @media (max-width: 480px) {
   .live-visitor-counter {
     bottom: 12px;
     left: 12px;
     padding: 5px 10px;
-    font-size: 12px;
-    gap: 5px;
+    font-size: 11px;
+    gap: 4px;
+    max-width: calc(100vw - 24px);
   }
   .visitor-icon {
     width: 13px;
     height: 13px;
   }
-  .visitor-text {
-    font-size: 11px;
+  .visitor-text,
+  .visitor-stat,
+  .visitor-divider {
+    font-size: 10.5px;
+  }
+  .sep {
+    display: none;
+  }
+  nav {
+    gap: 8px 14px;
+  }
+}
+
+@media (max-width: 380px) {
+  .cf-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px 5px;
+  }
+  .cf-stat-num {
+    font-size: 10.5px;
+  }
+  .cf-stat-desc {
+    font-size: 10px;
+  }
+  .mt-pb-badge {
+    font-size: 9.5px;
   }
 }
 

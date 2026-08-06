@@ -143,7 +143,7 @@
             const center = rect.left + rect.width / 2;
             let newWidth = Math.abs(clientX - center) * 2;
 
-            const minWidth = 400;
+            const minWidth = Math.min(320, window.innerWidth * 0.9);
             const maxWidthLimit = window.innerWidth * 0.95;
 
             if (newWidth < minWidth) newWidth = minWidth;
@@ -169,7 +169,148 @@
           resizer.addEventListener("mousedown", onStart);
           resizer.addEventListener("touchstart", onStart, { passive: false });
         }
+
+        // ── Live Visitor Counter (Today & Total Lifetime) ──
+        function runVisitorCounter() {
+          const todayEl = document.getElementById("visitor-count-today");
+          const totalEl = document.getElementById("visitor-count-total");
+          const legacyEl = document.getElementById("visitor-count");
+          if (!todayEl && !totalEl && !legacyEl) return;
+
+          const now = new Date();
+          const yyyy = now.getUTCFullYear();
+          const mm = String(now.getUTCMonth() + 1).padStart(2, "0");
+          const dd = String(now.getUTCDate()).padStart(2, "0");
+          const todayDateStr = `${yyyy}-${mm}-${dd}`;
+
+          const API_TOTAL_GET = "https://api.counterapi.dev/v1/jvp008-portfolio/visits/";
+          const API_TOTAL_UP = "https://api.counterapi.dev/v1/jvp008-portfolio/visits/up";
+          const API_TODAY_GET = `https://api.counterapi.dev/v1/jvp008-portfolio/daily-visits-${todayDateStr}/`;
+          const API_TODAY_UP = `https://api.counterapi.dev/v1/jvp008-portfolio/daily-visits-${todayDateStr}/up`;
+
+          let cachedToday = null;
+          let cachedTotal = null;
+
+          try {
+            const cachedDate = localStorage.getItem("cached_visitor_date");
+            const cachedTodayRaw = localStorage.getItem("cached_visitor_count_today");
+            const cachedTotalRaw = localStorage.getItem("cached_visitor_count_total");
+
+            if (cachedTotalRaw && !isNaN(parseInt(cachedTotalRaw, 10))) {
+              cachedTotal = parseInt(cachedTotalRaw, 10);
+            }
+            if (cachedDate === todayDateStr && cachedTodayRaw && !isNaN(parseInt(cachedTodayRaw, 10))) {
+              cachedToday = parseInt(cachedTodayRaw, 10);
+            }
+          } catch (e) {}
+
+          if (todayEl && cachedToday !== null) todayEl.textContent = cachedToday.toLocaleString();
+          if (totalEl && cachedTotal !== null) totalEl.textContent = cachedTotal.toLocaleString();
+          if (legacyEl && cachedTotal !== null) legacyEl.textContent = cachedTotal.toLocaleString();
+
+          async function updateVisitorCounts() {
+            let hasVisitedSession = false;
+            try {
+              hasVisitedSession = sessionStorage.getItem("portfolio_visited") === "true";
+            } catch (e) {}
+
+            const totalTarget = hasVisitedSession ? API_TOTAL_GET : API_TOTAL_UP;
+            const todayTarget = hasVisitedSession ? API_TODAY_GET : API_TODAY_UP;
+
+            try {
+              const [resTotal, resToday] = await Promise.all([
+                fetch(totalTarget).catch(() => null),
+                fetch(todayTarget).catch(() => null)
+              ]);
+
+              if (resTotal && resTotal.ok) {
+                const dataTotal = await resTotal.json();
+                if (dataTotal && typeof dataTotal.count === "number" && dataTotal.count > 0) {
+                  cachedTotal = dataTotal.count;
+                  if (totalEl) totalEl.textContent = cachedTotal.toLocaleString();
+                  if (legacyEl) legacyEl.textContent = cachedTotal.toLocaleString();
+                  try { localStorage.setItem("cached_visitor_count_total", cachedTotal.toString()); } catch (e) {}
+                }
+              }
+
+              if (resToday && resToday.ok) {
+                const dataToday = await resToday.json();
+                if (dataToday && typeof dataToday.count === "number" && dataToday.count > 0) {
+                  cachedToday = dataToday.count;
+                  if (todayEl) todayEl.textContent = cachedToday.toLocaleString();
+                  try {
+                    localStorage.setItem("cached_visitor_date", todayDateStr);
+                    localStorage.setItem("cached_visitor_count_today", cachedToday.toString());
+                  } catch (e) {}
+                }
+              }
+
+              try {
+                sessionStorage.setItem("portfolio_visited", "true");
+              } catch (e) {}
+            } catch (err) {
+              console.warn("Visitor counter fetch error:", err);
+            }
+
+            if (todayEl && (todayEl.textContent === "..." || todayEl.textContent === "")) {
+              todayEl.textContent = (cachedToday !== null ? cachedToday : 1).toLocaleString();
+            }
+            if (totalEl && (totalEl.textContent === "..." || totalEl.textContent === "")) {
+              totalEl.textContent = (cachedTotal !== null ? cachedTotal : 1).toLocaleString();
+            }
+            if (legacyEl && (legacyEl.textContent === "..." || legacyEl.textContent === "")) {
+              legacyEl.textContent = (cachedTotal !== null ? cachedTotal : 1).toLocaleString();
+            }
+          }
+
+          updateVisitorCounts();
+
+          setInterval(async () => {
+            try {
+              const [resTotal, resToday] = await Promise.all([
+                fetch(API_TOTAL_GET).catch(() => null),
+                fetch(API_TODAY_GET).catch(() => null)
+              ]);
+              if (resTotal && resTotal.ok) {
+                const d = await resTotal.json();
+                if (d && typeof d.count === "number" && d.count > 0) {
+                  if (totalEl) totalEl.textContent = d.count.toLocaleString();
+                  if (legacyEl) legacyEl.textContent = d.count.toLocaleString();
+                  try { localStorage.setItem("cached_visitor_count_total", d.count.toString()); } catch (e) {}
+                }
+              }
+              if (resToday && resToday.ok) {
+                const d = await resToday.json();
+                if (d && typeof d.count === "number" && d.count > 0) {
+                  if (todayEl) todayEl.textContent = d.count.toLocaleString();
+                  try {
+                    localStorage.setItem("cached_visitor_date", todayDateStr);
+                    localStorage.setItem("cached_visitor_count_today", d.count.toString());
+                  } catch (e) {}
+                }
+              }
+            } catch (e) {}
+          }, 30000);
+        }
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", runVisitorCounter);
+        } else {
+          runVisitorCounter();
+        }
       })();
     </script>
+
+    <!-- Live Visitor Counter (Bottom Left Corner) -->
+    <div id="live-visitor-counter" class="live-visitor-counter" aria-live="polite" title="Live Portfolio Visitors (Today & Lifetime)">
+      <span class="visitor-pulse-dot" aria-hidden="true"></span>
+      <svg class="visitor-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+      <span class="visitor-stat"><span id="visitor-count-today" class="visitor-count">...</span> today</span>
+      <span class="visitor-divider">·</span>
+      <span class="visitor-stat"><span id="visitor-count-total" class="visitor-count">...</span> total</span>
+    </div>
   </body>
 </html>
