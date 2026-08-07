@@ -1223,9 +1223,9 @@
           if (!todayEl || !totalEl || !counterWidget) return;
 
           var COUNTER_NS = 'jvp008-portfolio';
-          var TOTAL_KEY = 'unique-visits-v3';
+          var TOTAL_KEY = 'unique-visits-v4';
           var TODAY_STR = new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'
-          var DAILY_KEY = 'daily-v2-' + TODAY_STR;
+          var DAILY_KEY = 'daily-v3-' + TODAY_STR;
 
           var BASE_URL = 'https://abacus.jasoncameron.dev';
           var API_HIT_TOTAL = BASE_URL + '/hit/' + COUNTER_NS + '/' + TOTAL_KEY;
@@ -1235,9 +1235,9 @@
           var IP_API = 'https://api.ipify.org?format=json';
 
           // localStorage keys
-          var HASH_KEY_TOTAL = 'visitor_ip_hash_v3';
-          var HASH_KEY_DAILY = 'visitor_ip_hash_daily_v3';
-          var HASH_DATE_KEY = 'visitor_ip_hash_date_v3';
+          var HASH_KEY_TOTAL = 'visitor_ip_hash_v4';
+          var HASH_KEY_DAILY = 'visitor_ip_hash_daily_v4';
+          var HASH_DATE_KEY = 'visitor_ip_hash_date_v4';
           var CACHE_TOTAL = 'cached_visitor_total';
           var CACHE_DAILY = 'cached_visitor_daily';
 
