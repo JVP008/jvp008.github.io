@@ -104,14 +104,68 @@
           document.documentElement.classList.add("dark");
           document.body.classList.add("dark");
         }
-        btn.addEventListener("click", function () {
-          document.documentElement.classList.toggle("dark");
-          document.body.classList.toggle("dark");
-          const isDark = document.body.classList.contains("dark");
-          try {
-            localStorage.setItem("theme", isDark ? "dark" : "light");
-          } catch (e) {
-            // Ignore localStorage errors in private browsing/iframe sandboxing
+        btn.addEventListener("click", function (e) {
+          const x = (e && typeof e.clientX === "number" && e.clientX > 0) ? e.clientX : window.innerWidth - 24;
+          const y = (e && typeof e.clientY === "number" && e.clientY > 0) ? e.clientY : 24;
+          const endRadius = Math.hypot(
+            Math.max(x, window.innerWidth - x),
+            Math.max(y, window.innerHeight - y)
+          );
+
+          function applyThemeToggle() {
+            document.documentElement.classList.toggle("dark");
+            document.body.classList.toggle("dark");
+            const isDark = document.body.classList.contains("dark");
+            try {
+              localStorage.setItem("theme", isDark ? "dark" : "light");
+            } catch (e) {
+              // Ignore localStorage errors
+            }
+          }
+
+          if (document.startViewTransition) {
+            const transition = document.startViewTransition(applyThemeToggle);
+            transition.ready.then(() => {
+              const clipPath = [
+                `circle(0px at ${x}px ${y}px)`,
+                `circle(${endRadius}px at ${x}px ${y}px)`
+              ];
+              document.documentElement.animate(
+                { clipPath: clipPath },
+                {
+                  duration: 500,
+                  easing: "ease-in-out",
+                  pseudoElement: "::view-transition-new(root)"
+                }
+              );
+            });
+          } else {
+            // Fallback circular ripple for browsers without native View Transitions API
+            let overlay = document.getElementById("theme-ripple-overlay");
+            if (!overlay) {
+              overlay = document.createElement("div");
+              overlay.id = "theme-ripple-overlay";
+              document.body.appendChild(overlay);
+            }
+            const isDarkNext = !document.body.classList.contains("dark");
+            overlay.style.background = isDarkNext ? "#1a1a1a" : "#ffffff";
+            overlay.style.left = `${x - endRadius}px`;
+            overlay.style.top = `${y - endRadius}px`;
+            overlay.style.width = `${endRadius * 2}px`;
+            overlay.style.height = `${endRadius * 2}px`;
+            overlay.style.transform = "scale(0)";
+            overlay.style.opacity = "1";
+
+            requestAnimationFrame(() => {
+              overlay.style.transform = "scale(1)";
+              setTimeout(() => {
+                applyThemeToggle();
+                overlay.style.opacity = "0";
+                setTimeout(() => {
+                  overlay.style.transform = "scale(0)";
+                }, 500);
+              }, 300);
+            });
           }
         });
 
@@ -148,7 +202,7 @@
             const center = rect.left + rect.width / 2;
             let newWidth = Math.abs(clientX - center) * 2;
 
-            const minWidth = 400;
+            const minWidth = Math.min(400, window.innerWidth - 32);
             const maxWidthLimit = window.innerWidth * 0.95;
 
             if (newWidth < minWidth) newWidth = minWidth;
