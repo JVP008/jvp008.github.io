@@ -1625,8 +1625,8 @@ body.dark .visitor-separator {
 /* ── View Transitions Circular Expand Ripple ── */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
+  animation: none !important;
+  mix-blend-mode: normal !important;
 }
 
 .dark::view-transition-old(root) {
