@@ -9,6 +9,15 @@
       content="Jayesh Vinod Patil — blog posts on programming and thoughts."
     />
     <link rel="stylesheet" href="../style.css" />
+    <script>
+      (function() {
+        try {
+          if (localStorage.getItem("theme") === "dark") {
+            document.documentElement.classList.add("dark");
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <button

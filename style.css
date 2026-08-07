@@ -58,9 +58,11 @@ body.dark ::selection {
 }
 
 /* ── Dark mode ── */
+html.dark,
 body.dark {
   color: #d4d4d4;
   background: #1a1a1a;
+  color-scheme: dark;
 }
 
 body.dark a {
