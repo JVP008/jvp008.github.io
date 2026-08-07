@@ -301,7 +301,13 @@
           document.documentElement.classList.add('dark');
           document.body.classList.add('dark');
         }
+
+        let isTransitioning = false;
+
         btn.addEventListener('click', function (e) {
+          if (isTransitioning) return;
+          isTransitioning = true;
+
           const x = (e && typeof e.clientX === 'number' && e.clientX > 0) ? e.clientX : window.innerWidth - 24;
           const y = (e && typeof e.clientY === 'number' && e.clientY > 0) ? e.clientY : 24;
           const endRadius = Math.hypot(
@@ -323,22 +329,36 @@
           }
 
           if (document.startViewTransition) {
-            const transition = document.startViewTransition(applyThemeToggle);
-            transition.ready.then(() => {
-              const clipPath = isDarkNow
-                ? [`circle(${endRadius}px at ${x}px ${y}px)`, `circle(0px at ${x}px ${y}px)`]
-                : [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`];
+            try {
+              const transition = document.startViewTransition(applyThemeToggle);
+              transition.ready.then(() => {
+                const clipPath = isDarkNow
+                  ? [`circle(${endRadius}px at ${x}px ${y}px)`, `circle(0px at ${x}px ${y}px)`]
+                  : [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`];
 
-              document.documentElement.animate(
-                { clipPath: clipPath },
-                {
-                  duration: 500,
-                  easing: 'ease-in-out',
-                  fill: 'forwards',
-                  pseudoElement: isDarkNow ? '::view-transition-old(root)' : '::view-transition-new(root)'
-                }
-              );
-            });
+                const anim = document.documentElement.animate(
+                  { clipPath: clipPath },
+                  {
+                    duration: 500,
+                    easing: 'ease-in-out',
+                    fill: 'forwards',
+                    pseudoElement: isDarkNow ? '::view-transition-old(root)' : '::view-transition-new(root)'
+                  }
+                );
+                anim.onfinish = () => { isTransitioning = false; };
+                anim.oncancel = () => { isTransitioning = false; };
+              }).catch(() => {
+                isTransitioning = false;
+              });
+              if (transition.finished) {
+                transition.finished.catch(() => {}).finally(() => {
+                  isTransitioning = false;
+                });
+              }
+            } catch (err) {
+              applyThemeToggle();
+              isTransitioning = false;
+            }
           } else {
             // Fallback circular ripple for browsers without native View Transitions API
             let overlay = document.getElementById('theme-ripple-overlay');
@@ -363,6 +383,7 @@
                 overlay.style.opacity = '0';
                 setTimeout(() => {
                   overlay.style.transform = 'scale(0)';
+                  isTransitioning = false;
                 }, 500);
               }, 300);
             });
