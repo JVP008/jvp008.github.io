@@ -989,7 +989,8 @@ body.dark .mt-card {
 .mt-header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .mt-select {
@@ -1621,20 +1622,102 @@ body.dark .visitor-separator {
   color: #484f58;
 }
 
+/* ── View Transitions Circular Expand Ripple ── */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+}
+
+.dark::view-transition-old(root) {
+  z-index: 9999;
+}
+
+.dark::view-transition-new(root) {
+  z-index: 1;
+}
+
+/* Fallback Ripple Overlay for browsers without native View Transitions API */
+#theme-ripple-overlay {
+  position: fixed;
+  pointer-events: none;
+  z-index: 99999;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+/* ── Mobile Layout Responsiveness Fixes ── */
+@media (max-width: 768px) {
+  .container {
+    padding: 40px 16px 60px;
+  }
+
+  .container::before {
+    display: none; /* Prevent horizontal overflow from left decorative line */
+  }
+
+  .resizer-handle {
+    display: none; /* Hide manual resizer bar on mobile touch screens */
+  }
+
+  .mt-header-left {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .mt-grid-wrapper,
+  .gh-grid-scroll {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 600px) {
+  .cf-stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+  }
+
+  .mt-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .mt-pb-badge {
+    padding: 2px 6px;
+    font-size: 10px;
+  }
+}
+
 @media (max-width: 480px) {
+  body {
+    font-size: 16px;
+  }
+
   .live-visitor-counter {
     bottom: 12px;
     left: 12px;
     padding: 5px 10px;
-    font-size: 12px;
-    gap: 5px;
+    font-size: 11px;
+    gap: 4px;
   }
+
   .visitor-icon {
     width: 13px;
     height: 13px;
   }
+
   .visitor-text {
-    font-size: 11px;
+    font-size: 10px;
   }
 }
 
