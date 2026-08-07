@@ -1505,7 +1505,7 @@ body.dark .mt-card {
   color: #8b949e;
 }
 
-/* ── Live Visitor Counter (Bottom Left Corner) ── */
+/* ── Unique Visitor Counter (Bottom Left Corner) ── */
 .live-visitor-counter {
   position: fixed;
   bottom: 16px;
@@ -1525,8 +1525,15 @@ body.dark .mt-card {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  transition: background 0.3s, color 0.3s, border-color 0.3s, transform 0.2s ease, box-shadow 0.2s ease;
+  transition: background 0.3s, color 0.3s, border-color 0.3s, transform 0.2s ease, box-shadow 0.2s ease, opacity 0.5s ease, visibility 0.5s ease;
   user-select: none;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.live-visitor-counter.visible {
+  opacity: 1;
+  visibility: visible;
 }
 
 .live-visitor-counter:hover {
