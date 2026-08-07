@@ -493,6 +493,8 @@
             Math.max(y, window.innerHeight - y)
           );
 
+          const isDarkNow = document.body.classList.contains("dark");
+
           function applyThemeToggle() {
             document.documentElement.classList.toggle("dark");
             document.body.classList.toggle("dark");
@@ -507,16 +509,16 @@
           if (document.startViewTransition) {
             const transition = document.startViewTransition(applyThemeToggle);
             transition.ready.then(() => {
-              const clipPath = [
-                `circle(0px at ${x}px ${y}px)`,
-                `circle(${endRadius}px at ${x}px ${y}px)`
-              ];
+              const clipPath = isDarkNow
+                ? [`circle(${endRadius}px at ${x}px ${y}px)`, `circle(0px at ${x}px ${y}px)`]
+                : [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`];
+
               document.documentElement.animate(
                 { clipPath: clipPath },
                 {
                   duration: 500,
                   easing: "ease-in-out",
-                  pseudoElement: "::view-transition-new(root)"
+                  pseudoElement: isDarkNow ? "::view-transition-old(root)" : "::view-transition-new(root)"
                 }
               );
             });
