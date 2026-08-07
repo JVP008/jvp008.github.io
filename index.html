@@ -270,8 +270,11 @@
         <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
         <circle cx="12" cy="12" r="3"/>
       </svg>
-      <span class="visitor-text">visitors:</span>
-      <span id="visitor-count" class="visitor-count">...</span>
+      <span class="visitor-text">today:</span>
+      <span id="visitor-count-today" class="visitor-count">...</span>
+      <span class="visitor-separator" aria-hidden="true">·</span>
+      <span class="visitor-text">total:</span>
+      <span id="visitor-count-total" class="visitor-count">...</span>
     </div>
 
     <script>
@@ -1146,25 +1149,38 @@
         })();
 
         // ── Unique Visitor Counter (IP-based dedup via ipify + Abacus API) ──
+        // Tracks both today's unique visitors and total unique visitors
         (function initUniqueVisitorCounter() {
-          const countEl = document.getElementById('visitor-count');
-          const counterWidget = document.getElementById('live-visitor-counter');
-          if (!countEl || !counterWidget) return;
+          var todayEl = document.getElementById('visitor-count-today');
+          var totalEl = document.getElementById('visitor-count-total');
+          var counterWidget = document.getElementById('live-visitor-counter');
+          if (!todayEl || !totalEl || !counterWidget) return;
 
-          const COUNTER_NS = 'jvp008-portfolio';
-          const COUNTER_KEY = 'unique-visits-v2';
-          const API_HIT = 'https://abacus.jasoncameron.dev/hit/' + COUNTER_NS + '/' + COUNTER_KEY;
-          const API_GET = 'https://abacus.jasoncameron.dev/get/' + COUNTER_NS + '/' + COUNTER_KEY;
-          const IP_API = 'https://api.ipify.org?format=json';
-          const STORAGE_KEY = 'visitor_ip_hash';
-          const CACHE_KEY = 'cached_visitor_count';
+          var COUNTER_NS = 'jvp008-portfolio';
+          var TOTAL_KEY = 'unique-visits-v2';
+          var TODAY_STR = new Date().toISOString().slice(0, 10); // 'YYYY-MM-DD'
+          var DAILY_KEY = 'daily-' + TODAY_STR;
+
+          var BASE_URL = 'https://abacus.jasoncameron.dev';
+          var API_HIT_TOTAL = BASE_URL + '/hit/' + COUNTER_NS + '/' + TOTAL_KEY;
+          var API_GET_TOTAL = BASE_URL + '/get/' + COUNTER_NS + '/' + TOTAL_KEY;
+          var API_HIT_DAILY = BASE_URL + '/hit/' + COUNTER_NS + '/' + DAILY_KEY;
+          var API_GET_DAILY = BASE_URL + '/get/' + COUNTER_NS + '/' + DAILY_KEY;
+          var IP_API = 'https://api.ipify.org?format=json';
+
+          // localStorage keys
+          var HASH_KEY_TOTAL = 'visitor_ip_hash';
+          var HASH_KEY_DAILY = 'visitor_ip_hash_daily';
+          var HASH_DATE_KEY = 'visitor_ip_hash_date';
+          var CACHE_TOTAL = 'cached_visitor_total';
+          var CACHE_DAILY = 'cached_visitor_daily';
 
           // Hash an IP string using SHA-256 via Web Crypto API
           async function hashIP(ip) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode('jvp008-salt-' + ip);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            var encoder = new TextEncoder();
+            var data = encoder.encode('jvp008-salt-' + ip);
+            var hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            var hashArray = Array.from(new Uint8Array(hashBuffer));
             return hashArray.map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
           }
 
@@ -1173,11 +1189,36 @@
             counterWidget.classList.add('visible');
           }
 
-          // Update the displayed count and cache it
-          function displayCount(count) {
-            countEl.textContent = count.toLocaleString();
-            try { localStorage.setItem(CACHE_KEY, count.toString()); } catch (e) {}
-            showCounter();
+          // Display counts and cache them
+          function displayTotal(count) {
+            totalEl.textContent = count.toLocaleString();
+            try { localStorage.setItem(CACHE_TOTAL, count.toString()); } catch (e) {}
+          }
+          function displayDaily(count) {
+            todayEl.textContent = count.toLocaleString();
+            try { localStorage.setItem(CACHE_DAILY, count.toString()); } catch (e) {}
+          }
+
+          async function safeFetch(url) {
+            try {
+              var res = await fetch(url);
+              if (res.ok) {
+                var data = await res.json();
+                if (data && typeof data.value === 'number') return data.value;
+              }
+            } catch (e) {}
+            return null;
+          }
+
+          async function fetchCount(hitUrl, getUrl, isNewVisitor) {
+            if (isNewVisitor) {
+              var val = await safeFetch(hitUrl);
+              if (val !== null) return val;
+            }
+            var val = await safeFetch(getUrl);
+            if (val !== null) return val;
+            // If get returned null (e.g., key never hit before), initialize via hit
+            return await safeFetch(hitUrl);
           }
 
           async function initCounter() {
@@ -1191,57 +1232,62 @@
               // Step 2: Hash the IP
               var currentHash = await hashIP(visitorIP);
 
-              // Step 3: Check if this IP hash has been seen before
-              var storedHash = null;
-              try { storedHash = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+              // Step 3: Check total — has this IP ever been seen?
+              var storedHashTotal = null;
+              try { storedHashTotal = localStorage.getItem(HASH_KEY_TOTAL); } catch (e) {}
+              var isNewTotal = (storedHashTotal !== currentHash);
 
-              if (storedHash !== currentHash) {
-                // New unique visitor — increment counter
-                var hitRes = await fetch(API_HIT);
-                if (hitRes.ok) {
-                  var hitData = await hitRes.json();
-                  if (hitData && typeof hitData.value === 'number') {
-                    displayCount(hitData.value);
-                  }
-                }
-                // Save the hash so this IP won't be counted again
-                try { localStorage.setItem(STORAGE_KEY, currentHash); } catch (e) {}
-              } else {
-                // Returning visitor — just read the count
-                var getRes = await fetch(API_GET);
-                if (getRes.ok) {
-                  var getData = await getRes.json();
-                  if (getData && typeof getData.value === 'number') {
-                    displayCount(getData.value);
-                  }
-                }
+              // Step 4: Check daily — has this IP been seen today?
+              var storedHashDaily = null;
+              var storedDate = null;
+              try {
+                storedHashDaily = localStorage.getItem(HASH_KEY_DAILY);
+                storedDate = localStorage.getItem(HASH_DATE_KEY);
+              } catch (e) {}
+              var isNewDaily = (storedDate !== TODAY_STR || storedHashDaily !== currentHash);
+
+              // Step 5: Fetch counts concurrently
+              var results = await Promise.all([
+                fetchCount(API_HIT_TOTAL, API_GET_TOTAL, isNewTotal),
+                fetchCount(API_HIT_DAILY, API_GET_DAILY, isNewDaily)
+              ]);
+
+              if (isNewTotal && results[0] !== null) {
+                try { localStorage.setItem(HASH_KEY_TOTAL, currentHash); } catch (e) {}
               }
+              if (isNewDaily && results[1] !== null) {
+                try {
+                  localStorage.setItem(HASH_KEY_DAILY, currentHash);
+                  localStorage.setItem(HASH_DATE_KEY, TODAY_STR);
+                } catch (e) {}
+              }
+
+              if (results[0] !== null) displayTotal(results[0]);
+              if (results[1] !== null) displayDaily(results[1]);
+              showCounter();
+
             } catch (err) {
               console.warn('Visitor counter error:', err);
-              // Fallback: try to show cached count
+              // Fallback: try to show cached counts
+              var shown = false;
               try {
-                var cached = localStorage.getItem(CACHE_KEY);
-                if (cached) {
-                  countEl.textContent = parseInt(cached, 10).toLocaleString();
-                  showCounter();
-                }
+                var cachedTotal = localStorage.getItem(CACHE_TOTAL);
+                var cachedDaily = localStorage.getItem(CACHE_DAILY);
+                if (cachedTotal) { totalEl.textContent = parseInt(cachedTotal, 10).toLocaleString(); shown = true; }
+                if (cachedDaily) { todayEl.textContent = parseInt(cachedDaily, 10).toLocaleString(); shown = true; }
               } catch (e) {}
+              if (shown) showCounter();
             }
           }
 
           initCounter();
 
-          // Auto-refresh count every 15 seconds (read-only, no increment)
+          // Auto-refresh counts every 15 seconds (read-only)
           setInterval(async function() {
-            try {
-              var res = await fetch(API_GET);
-              if (res.ok) {
-                var data = await res.json();
-                if (data && typeof data.value === 'number') {
-                  displayCount(data.value);
-                }
-              }
-            } catch (e) {}
+            var totalVal = await safeFetch(API_GET_TOTAL);
+            var dailyVal = await safeFetch(API_GET_DAILY);
+            if (totalVal !== null) displayTotal(totalVal);
+            if (dailyVal !== null) displayDaily(dailyVal);
           }, 15000);
         })();
       })();

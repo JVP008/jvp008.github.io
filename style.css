@@ -1611,6 +1611,16 @@ body.dark .visitor-count {
   color: #34d399;
 }
 
+.visitor-separator {
+  color: #d0d7de;
+  font-weight: 400;
+  margin: 0 1px;
+}
+
+body.dark .visitor-separator {
+  color: #484f58;
+}
+
 @media (max-width: 480px) {
   .live-visitor-counter {
     bottom: 12px;
