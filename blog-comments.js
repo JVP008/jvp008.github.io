@@ -52,9 +52,33 @@
       const clean = (name || "").trim();
       if (clean) {
         localStorage.setItem(NAME_STORAGE_KEY, clean);
+        // Sync across all name inputs on the page
+        document
+          .querySelectorAll("#comment-author, .reply-author-input")
+          .forEach((input) => {
+            if (input && input.value !== clean) {
+              input.value = clean;
+            }
+          });
       }
     } catch (e) {}
   }
+
+  // Real-time synchronization when user types their name
+  document.addEventListener("input", function (e) {
+    if (
+      e.target &&
+      (e.target.id === "comment-author" ||
+        e.target.classList.contains("reply-author-input"))
+    ) {
+      const val = e.target.value.trim();
+      if (val) {
+        try {
+          localStorage.setItem(NAME_STORAGE_KEY, val);
+        } catch (err) {}
+      }
+    }
+  });
 
   // Helper to generate a unique commentId
   function generateCommentId() {
