@@ -50,7 +50,17 @@
   function getCommenterInfo() {
     try {
       const data = localStorage.getItem(COMMENTER_STORAGE_KEY);
-      return data ? JSON.parse(data) : null;
+      if (data) {
+        const parsed = JSON.parse(data);
+        if (parsed && typeof parsed === "object") {
+          return {
+            name: (parsed.name || "").trim(),
+            email: (parsed.email || "").trim(),
+            linkedin: (parsed.linkedin || "").trim(),
+          };
+        }
+      }
+      return null;
     } catch (e) {
       return null;
     }
@@ -58,15 +68,87 @@
 
   function saveCommenterInfo(name, email, linkedin) {
     try {
-      localStorage.setItem(
-        COMMENTER_STORAGE_KEY,
-        JSON.stringify({
-          name: (name || "").trim(),
-          email: (email || "").trim(),
-          linkedin: (linkedin || "").trim(),
-        })
-      );
-    } catch (e) {}
+      const existing = getCommenterInfo() || {};
+      const updated = {
+        name:
+          name !== undefined && name !== null
+            ? String(name).trim()
+            : existing.name || "",
+        email:
+          email !== undefined && email !== null
+            ? String(email).trim()
+            : existing.email || "",
+        linkedin:
+          linkedin !== undefined && linkedin !== null
+            ? String(linkedin).trim()
+            : existing.linkedin || "",
+      };
+      if (updated.name || updated.email || updated.linkedin) {
+        localStorage.setItem(COMMENTER_STORAGE_KEY, JSON.stringify(updated));
+      }
+      return updated;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Update all identity bars across the whole page in real-time
+  function updateAllIdentityDisplays(info) {
+    const commenter = info || getCommenterInfo();
+    const hasName = Boolean(commenter && commenter.name);
+
+    // Update main comment form
+    const mainBar = document.getElementById("main-identity-bar");
+    const mainFields = document.getElementById("main-identity-fields");
+    const mainName = document.getElementById("main-identity-name");
+    const mainAuthorInput = document.getElementById("comment-author");
+    const mainEmailInput = document.getElementById("comment-email");
+    const mainLinkedinInput = document.getElementById("comment-linkedin");
+
+    if (mainName && hasName) mainName.textContent = commenter.name;
+    if (mainAuthorInput && hasName && !mainAuthorInput.value)
+      mainAuthorInput.value = commenter.name;
+    if (mainEmailInput && commenter && commenter.email && !mainEmailInput.value)
+      mainEmailInput.value = commenter.email;
+    if (
+      mainLinkedinInput &&
+      commenter &&
+      commenter.linkedin &&
+      !mainLinkedinInput.value
+    )
+      mainLinkedinInput.value = commenter.linkedin;
+
+    if (
+      mainBar &&
+      mainFields &&
+      hasName &&
+      !mainFields.dataset.userManuallyOpened
+    ) {
+      mainBar.style.display = "flex";
+      mainFields.style.display = "none";
+    }
+
+    // Update all reply form containers
+    document.querySelectorAll(".reply-form-container").forEach((container) => {
+      const bar = container.querySelector(".comment-identity-bar");
+      const fields = container.querySelector(".comment-identity-fields");
+      const nameDisp = container.querySelector(".identity-name-display");
+      const aInput = container.querySelector(".reply-author-input");
+      const eInput = container.querySelector(".reply-email-input");
+      const lInput = container.querySelector(".reply-linkedin-input");
+
+      if (nameDisp && hasName) nameDisp.textContent = commenter.name;
+      if (aInput && hasName && !aInput.value) aInput.value = commenter.name;
+      if (eInput && commenter && commenter.email && !eInput.value)
+        eInput.value = commenter.email;
+      if (lInput && commenter && commenter.linkedin && !lInput.value)
+        lInput.value = commenter.linkedin;
+
+      if (bar && fields && hasName && !fields.dataset.userManuallyOpened) {
+        bar.style.display = "flex";
+        fields.style.display = "none";
+      }
+    });
   }
 
   // Helper to generate a unique commentId
@@ -212,33 +294,32 @@
     replyFormContainer.style.display = "none";
 
     const savedInfo = getCommenterInfo();
-    const hasSavedIdentity =
-      savedInfo && savedInfo.name && (savedInfo.email || savedInfo.linkedin);
+    const hasSavedName = Boolean(savedInfo && savedInfo.name);
 
     replyFormContainer.innerHTML = `
       <form class="comment-form reply-form">
-        <div class="comment-identity-bar" style="${hasSavedIdentity ? "" : "display: none;"}">
-          <span>Replying as <strong class="identity-name-display">${hasSavedIdentity ? escapeHTML(savedInfo.name) : ""}</strong></span>
-          <button type="button" class="identity-edit-link">not you? edit</button>
+        <div class="comment-identity-bar" style="${hasSavedName ? "display: flex;" : "display: none;"}">
+          <span>Replying as <strong class="identity-name-display">${hasSavedName ? escapeHTML(savedInfo.name) : ""}</strong></span>
+          <button type="button" class="identity-edit-link">Change</button>
         </div>
-        <div class="comment-identity-fields" style="${hasSavedIdentity ? "display: none;" : ""}">
-          <div class="comment-form-group">
-            <label>Name <span class="required">*</span></label>
-            <input type="text" class="reply-author-input" placeholder="Your name" required maxlength="50" value="${hasSavedIdentity ? escapeHTML(savedInfo.name) : ""}" />
+        <div class="comment-identity-fields" style="${hasSavedName ? "display: none;" : "display: flex;"}">
+          <div class="comment-identity-grid">
+            <div class="comment-form-group">
+              <label>Name <span class="required">*</span></label>
+              <input type="text" class="reply-author-input" placeholder="Your name" required maxlength="50" value="${hasSavedName ? escapeHTML(savedInfo.name) : ""}" />
+            </div>
+            <div class="comment-form-group">
+              <label>Email <span class="hint">(or LinkedIn)</span></label>
+              <input type="email" class="reply-email-input" placeholder="you@example.com" maxlength="100" value="${savedInfo && savedInfo.email ? escapeHTML(savedInfo.email) : ""}" />
+            </div>
+            <div class="comment-form-group">
+              <label>LinkedIn <span class="hint">(or Email)</span></label>
+              <input type="url" class="reply-linkedin-input" placeholder="https://linkedin.com/in/..." maxlength="150" value="${savedInfo && savedInfo.linkedin ? escapeHTML(savedInfo.linkedin) : ""}" />
+            </div>
           </div>
-          <div class="comment-form-group">
-            <label>Email <span class="hint">— provide email or LinkedIn (not published)</span></label>
-            <input type="email" class="reply-email-input" placeholder="you@example.com" maxlength="100" value="${hasSavedIdentity && savedInfo.email ? escapeHTML(savedInfo.email) : ""}" />
-          </div>
-          <div class="comment-form-or">— OR —</div>
-          <div class="comment-form-group">
-            <label>LinkedIn <span class="hint">— provide LinkedIn or email</span></label>
-            <input type="url" class="reply-linkedin-input" placeholder="https://linkedin.com/in/yourprofile" maxlength="150" value="${hasSavedIdentity && savedInfo.linkedin ? escapeHTML(savedInfo.linkedin) : ""}" />
-          </div>
-          <p class="identity-note">* At least one of Email or LinkedIn is required to reply.</p>
+          <p class="identity-note" style="display: none;">* Please provide at least an Email or LinkedIn to verify your reply.</p>
         </div>
-        <div class="comment-form-group">
-          <label>Reply <span class="required">*</span></label>
+        <div class="comment-form-group reply-body-group">
           <textarea class="reply-body-input" placeholder="Write your reply..." required maxlength="1000"></textarea>
         </div>
         <div class="reply-form-actions">
@@ -250,14 +331,21 @@
 
     cardContent.appendChild(replyFormContainer);
 
-    // Toggle "not you? edit" in reply form
+    // Identity Bar & Fields references
     const identityEditBtn = replyFormContainer.querySelector(".identity-edit-link");
     const identityBar = replyFormContainer.querySelector(".comment-identity-bar");
     const identityFields = replyFormContainer.querySelector(".comment-identity-fields");
     const authorInput = replyFormContainer.querySelector(".reply-author-input");
+    const emailInput = replyFormContainer.querySelector(".reply-email-input");
+    const linkedinInput = replyFormContainer.querySelector(".reply-linkedin-input");
+    const bodyInput = replyFormContainer.querySelector(".reply-body-input");
+    const nameDisplay = replyFormContainer.querySelector(".identity-name-display");
+    const identityNote = replyFormContainer.querySelector(".identity-note");
 
+    // Toggle "Change" in reply form
     if (identityEditBtn && identityBar && identityFields) {
       identityEditBtn.addEventListener("click", () => {
+        identityFields.dataset.userManuallyOpened = "true";
         identityBar.style.display = "none";
         identityFields.style.display = "flex";
         if (authorInput) {
@@ -266,6 +354,20 @@
         }
       });
     }
+
+    // Live sync inputs to localStorage and other forms
+    [authorInput, emailInput, linkedinInput].forEach((inputEl) => {
+      if (!inputEl) return;
+      inputEl.addEventListener("input", () => {
+        const a = authorInput ? authorInput.value.trim() : "";
+        const e = emailInput ? emailInput.value.trim() : "";
+        const l = linkedinInput ? linkedinInput.value.trim() : "";
+        if (a) {
+          const updated = saveCommenterInfo(a, e, l);
+          updateAllIdentityDisplays(updated);
+        }
+      });
+    });
 
     // Replies container
     const repliesContainer = document.createElement("div");
@@ -286,22 +388,35 @@
     // Toggle reply form visibility
     replyBtn.addEventListener("click", () => {
       const isVisible = replyFormContainer.style.display !== "none";
-      replyFormContainer.style.display = isVisible ? "none" : "block";
-      if (!isVisible) {
-        // Refresh saved identity in reply form in case it was updated in main form
-        const currentSaved = getCommenterInfo();
-        if (currentSaved && currentSaved.name && (currentSaved.email || currentSaved.linkedin)) {
-          const nameDisplay = replyFormContainer.querySelector(".identity-name-display");
-          const emailInput = replyFormContainer.querySelector(".reply-email-input");
-          const linkedinInput = replyFormContainer.querySelector(".reply-linkedin-input");
-          if (nameDisplay) nameDisplay.textContent = currentSaved.name;
-          if (authorInput && !authorInput.value) authorInput.value = currentSaved.name;
-          if (emailInput && !emailInput.value && currentSaved.email) emailInput.value = currentSaved.email;
-          if (linkedinInput && !linkedinInput.value && currentSaved.linkedin) linkedinInput.value = currentSaved.linkedin;
-        }
+      if (isVisible) {
+        replyFormContainer.style.display = "none";
+        return;
+      }
 
-        const bodyInput = replyFormContainer.querySelector(".reply-body-input");
+      // Show reply form
+      replyFormContainer.style.display = "block";
+
+      // Always re-check the latest identity info
+      const currentSaved = getCommenterInfo();
+      const hasName = Boolean(currentSaved && currentSaved.name);
+
+      if (hasName) {
+        if (nameDisplay) nameDisplay.textContent = currentSaved.name;
+        if (authorInput) authorInput.value = currentSaved.name;
+        if (emailInput && currentSaved.email) emailInput.value = currentSaved.email;
+        if (linkedinInput && currentSaved.linkedin)
+          linkedinInput.value = currentSaved.linkedin;
+
+        // Reset manual edit flag so it stays compact and frictionless
+        delete identityFields.dataset.userManuallyOpened;
+        if (identityBar) identityBar.style.display = "flex";
+        if (identityFields) identityFields.style.display = "none";
+
         if (bodyInput) bodyInput.focus();
+      } else {
+        if (identityBar) identityBar.style.display = "none";
+        if (identityFields) identityFields.style.display = "flex";
+        if (authorInput) authorInput.focus();
       }
     });
 
@@ -333,26 +448,49 @@
       replyForm.addEventListener("submit", (e) => {
         e.preventDefault();
 
-        const emailInput = replyForm.querySelector(".reply-email-input");
-        const linkedinInput = replyForm.querySelector(".reply-linkedin-input");
-        const bodyInput = replyForm.querySelector(".reply-body-input");
         const submitBtn = replyForm.querySelector(".reply-submit-btn");
-
         const currentSaved = getCommenterInfo();
-        const author = authorInput ? authorInput.value.trim() : (currentSaved ? currentSaved.name : "");
-        const email = emailInput ? emailInput.value.trim() : (currentSaved ? currentSaved.email : "");
-        const linkedin = linkedinInput ? linkedinInput.value.trim() : (currentSaved ? currentSaved.linkedin : "");
-        const body = bodyInput.value.trim();
 
-        if (!author || !body) return;
+        const author = authorInput && authorInput.value.trim()
+          ? authorInput.value.trim()
+          : currentSaved ? currentSaved.name : "";
+        const email = emailInput && emailInput.value.trim()
+          ? emailInput.value.trim()
+          : currentSaved ? currentSaved.email : "";
+        const linkedin = linkedinInput && linkedinInput.value.trim()
+          ? linkedinInput.value.trim()
+          : currentSaved ? currentSaved.linkedin : "";
+        const body = bodyInput ? bodyInput.value.trim() : "";
+
+        if (!body) {
+          if (bodyInput) bodyInput.focus();
+          return;
+        }
+
+        if (!author) {
+          identityFields.dataset.userManuallyOpened = "true";
+          identityBar.style.display = "none";
+          identityFields.style.display = "flex";
+          if (authorInput) authorInput.focus();
+          return;
+        }
 
         if (!email && !linkedin) {
-          alert("Please provide your Email or LinkedIn to verify your identity.");
+          identityFields.dataset.userManuallyOpened = "true";
+          identityBar.style.display = "none";
+          identityFields.style.display = "flex";
+          if (identityNote) {
+            identityNote.style.display = "block";
+            identityNote.textContent =
+              "* Please provide an Email or LinkedIn so we can verify your reply.";
+          }
+          if (emailInput) emailInput.focus();
           return;
         }
 
         // Save commenter identity to localStorage
         saveCommenterInfo(author, email, linkedin);
+        updateAllIdentityDisplays();
 
         const replyCommentData = {
           commentId: generateCommentId(),
@@ -366,7 +504,7 @@
 
         onSubmitComment(replyCommentData, submitBtn, () => {
           // Reset form and hide it
-          bodyInput.value = "";
+          if (bodyInput) bodyInput.value = "";
           replyFormContainer.style.display = "none";
         });
       });
@@ -412,8 +550,7 @@
   // Setup UI elements for comments
   function setupUI(isSetupNeeded) {
     const savedInfo = getCommenterInfo();
-    const hasSavedIdentity =
-      savedInfo && savedInfo.name && (savedInfo.email || savedInfo.linkedin);
+    const hasSavedName = Boolean(savedInfo && savedInfo.name);
 
     commentsSection.innerHTML = `
       <hr />
@@ -433,25 +570,26 @@
 
       <form id="comment-form" class="comment-form">
         <h3>Leave a Comment</h3>
-        <div id="main-identity-bar" class="comment-identity-bar" style="${hasSavedIdentity ? "" : "display: none;"}">
-          <span>Commenting as <strong id="main-identity-name">${hasSavedIdentity ? escapeHTML(savedInfo.name) : ""}</strong></span>
-          <button type="button" id="main-identity-edit-btn" class="identity-edit-link">not you? edit</button>
+        <div id="main-identity-bar" class="comment-identity-bar" style="${hasSavedName ? "display: flex;" : "display: none;"}">
+          <span>Commenting as <strong id="main-identity-name">${hasSavedName ? escapeHTML(savedInfo.name) : ""}</strong></span>
+          <button type="button" id="main-identity-edit-btn" class="identity-edit-link">Change</button>
         </div>
-        <div id="main-identity-fields" class="comment-identity-fields" style="${hasSavedIdentity ? "display: none;" : ""}">
-          <div class="comment-form-group">
-            <label for="comment-author">Name <span class="required">*</span></label>
-            <input type="text" id="comment-author" placeholder="Your name" required maxlength="50" value="${hasSavedIdentity ? escapeHTML(savedInfo.name) : ""}" />
+        <div id="main-identity-fields" class="comment-identity-fields" style="${hasSavedName ? "display: none;" : "display: flex;"}">
+          <div class="comment-identity-grid">
+            <div class="comment-form-group">
+              <label for="comment-author">Name <span class="required">*</span></label>
+              <input type="text" id="comment-author" placeholder="Your name" required maxlength="50" value="${hasSavedName ? escapeHTML(savedInfo.name) : ""}" />
+            </div>
+            <div class="comment-form-group">
+              <label for="comment-email">Email <span class="hint">(or LinkedIn)</span></label>
+              <input type="email" id="comment-email" placeholder="you@example.com" maxlength="100" value="${savedInfo && savedInfo.email ? escapeHTML(savedInfo.email) : ""}" />
+            </div>
+            <div class="comment-form-group">
+              <label for="comment-linkedin">LinkedIn <span class="hint">(or Email)</span></label>
+              <input type="url" id="comment-linkedin" placeholder="https://linkedin.com/in/..." maxlength="150" value="${savedInfo && savedInfo.linkedin ? escapeHTML(savedInfo.linkedin) : ""}" />
+            </div>
           </div>
-          <div class="comment-form-group">
-            <label for="comment-email">Email <span class="hint">— provide email or LinkedIn (not published)</span></label>
-            <input type="email" id="comment-email" placeholder="you@example.com" maxlength="100" value="${hasSavedIdentity && savedInfo.email ? escapeHTML(savedInfo.email) : ""}" />
-          </div>
-          <div class="comment-form-or">— OR —</div>
-          <div class="comment-form-group">
-            <label for="comment-linkedin">LinkedIn <span class="hint">— provide LinkedIn or email</span></label>
-            <input type="url" id="comment-linkedin" placeholder="https://linkedin.com/in/yourprofile" maxlength="150" value="${hasSavedIdentity && savedInfo.linkedin ? escapeHTML(savedInfo.linkedin) : ""}" />
-          </div>
-          <p class="identity-note">* At least one of Email or LinkedIn is required to comment.</p>
+          <p id="main-identity-note" class="identity-note" style="display: none;">* Please provide at least an Email or LinkedIn to verify your comment.</p>
         </div>
         <div class="comment-form-group">
           <label for="comment-body-input">Message <span class="required">*</span></label>
@@ -461,14 +599,17 @@
       </form>
     `;
 
-    // Hook up the "not you? edit" link for the main form
+    // Hook up the "Change" link for the main form
     const mainEditBtn = document.getElementById("main-identity-edit-btn");
     const mainIdentityBar = document.getElementById("main-identity-bar");
     const mainIdentityFields = document.getElementById("main-identity-fields");
     const mainAuthorInput = document.getElementById("comment-author");
+    const mainEmailInput = document.getElementById("comment-email");
+    const mainLinkedinInput = document.getElementById("comment-linkedin");
 
     if (mainEditBtn && mainIdentityBar && mainIdentityFields) {
       mainEditBtn.addEventListener("click", () => {
+        mainIdentityFields.dataset.userManuallyOpened = "true";
         mainIdentityBar.style.display = "none";
         mainIdentityFields.style.display = "flex";
         if (mainAuthorInput) {
@@ -477,26 +618,25 @@
         }
       });
     }
+
+    // Live sync inputs to localStorage and other forms
+    [mainAuthorInput, mainEmailInput, mainLinkedinInput].forEach((inputEl) => {
+      if (!inputEl) return;
+      inputEl.addEventListener("input", () => {
+        const a = mainAuthorInput ? mainAuthorInput.value.trim() : "";
+        const e = mainEmailInput ? mainEmailInput.value.trim() : "";
+        const l = mainLinkedinInput ? mainLinkedinInput.value.trim() : "";
+        if (a) {
+          const updated = saveCommenterInfo(a, e, l);
+          updateAllIdentityDisplays(updated);
+        }
+      });
+    });
   }
 
   // Update main identity UI when commenter_info is saved
   function refreshMainIdentityUI() {
-    const savedInfo = getCommenterInfo();
-    const mainIdentityBar = document.getElementById("main-identity-bar");
-    const mainIdentityName = document.getElementById("main-identity-name");
-    const mainIdentityFields = document.getElementById("main-identity-fields");
-    const authorInput = document.getElementById("comment-author");
-    const emailInput = document.getElementById("comment-email");
-    const linkedinInput = document.getElementById("comment-linkedin");
-
-    if (savedInfo && savedInfo.name && (savedInfo.email || savedInfo.linkedin)) {
-      if (mainIdentityName) mainIdentityName.textContent = savedInfo.name;
-      if (mainIdentityBar) mainIdentityBar.style.display = "flex";
-      if (mainIdentityFields) mainIdentityFields.style.display = "none";
-      if (authorInput) authorInput.value = savedInfo.name;
-      if (emailInput && savedInfo.email) emailInput.value = savedInfo.email;
-      if (linkedinInput && savedInfo.linkedin) linkedinInput.value = savedInfo.linkedin;
-    }
+    updateAllIdentityDisplays();
   }
 
   // ─── MODE 1: Setup Needed (Fallback / Local storage) ───
@@ -520,7 +660,7 @@
         (c) =>
           c.author.toLowerCase() === commentData.author.toLowerCase() &&
           c.body.trim() === commentData.body.trim() &&
-          (c.parentId || "") === (commentData.parentId || ""),
+          (c.parentId || "") === (commentData.parentId || "")
       );
       if (isDuplicate) {
         alert("You have already posted this exact comment!");
@@ -550,22 +690,55 @@
         const linkedinInput = document.getElementById("comment-linkedin");
         const bodyInput = document.getElementById("comment-body-input");
         const submitBtn = document.getElementById("comment-submit-btn");
+        const noteEl = document.getElementById("main-identity-note");
+        const mainIdentityFields = document.getElementById("main-identity-fields");
+        const mainIdentityBar = document.getElementById("main-identity-bar");
 
         const currentSaved = getCommenterInfo();
-        const author = authorInput ? authorInput.value.trim() : (currentSaved ? currentSaved.name : "");
-        const email = emailInput ? emailInput.value.trim() : (currentSaved ? currentSaved.email : "");
-        const linkedin = linkedinInput ? linkedinInput.value.trim() : (currentSaved ? currentSaved.linkedin : "");
-        const body = bodyInput.value.trim();
+        const author = authorInput && authorInput.value.trim()
+          ? authorInput.value.trim()
+          : currentSaved ? currentSaved.name : "";
+        const email = emailInput && emailInput.value.trim()
+          ? emailInput.value.trim()
+          : currentSaved ? currentSaved.email : "";
+        const linkedin = linkedinInput && linkedinInput.value.trim()
+          ? linkedinInput.value.trim()
+          : currentSaved ? currentSaved.linkedin : "";
+        const body = bodyInput ? bodyInput.value.trim() : "";
 
-        if (!author || !body) return;
+        if (!body) {
+          if (bodyInput) bodyInput.focus();
+          return;
+        }
+
+        if (!author) {
+          if (mainIdentityFields) {
+            mainIdentityFields.dataset.userManuallyOpened = "true";
+            mainIdentityFields.style.display = "flex";
+          }
+          if (mainIdentityBar) mainIdentityBar.style.display = "none";
+          if (authorInput) authorInput.focus();
+          return;
+        }
 
         if (!email && !linkedin) {
-          alert("Please provide your Email or LinkedIn to verify your identity.");
+          if (mainIdentityFields) {
+            mainIdentityFields.dataset.userManuallyOpened = "true";
+            mainIdentityFields.style.display = "flex";
+          }
+          if (mainIdentityBar) mainIdentityBar.style.display = "none";
+          if (noteEl) {
+            noteEl.style.display = "block";
+            noteEl.textContent =
+              "* Please provide an Email or LinkedIn to verify your comment.";
+          }
+          if (emailInput) emailInput.focus();
           return;
         }
 
         // Save commenter identity
         saveCommenterInfo(author, email, linkedin);
+        updateAllIdentityDisplays();
 
         const newComment = {
           commentId: generateCommentId(),
@@ -578,7 +751,7 @@
         };
 
         handleLocalSubmit(newComment, submitBtn, () => {
-          bodyInput.value = "";
+          if (bodyInput) bodyInput.value = "";
         });
       });
     }
@@ -595,7 +768,7 @@
         (c) =>
           c.author.toLowerCase() === commentData.author.toLowerCase() &&
           c.body.trim() === commentData.body.trim() &&
-          (c.parentId || "") === (commentData.parentId || ""),
+          (c.parentId || "") === (commentData.parentId || "")
       );
       if (isDuplicate) {
         alert("You have already posted this exact comment!");
@@ -633,7 +806,7 @@
             timestamp: commentData.timestamp || Date.now(),
           };
           activeComments.push(displayedComment);
-          
+
           refreshMainIdentityUI();
           renderComments(activeComments, "comments-list", handleActiveSubmit);
 
@@ -642,7 +815,8 @@
           if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.textContent =
-              submitBtn.classList && submitBtn.classList.contains("reply-submit-btn")
+              submitBtn.classList &&
+              submitBtn.classList.contains("reply-submit-btn")
                 ? "Submit Reply"
                 : "Submit Comment";
           }
@@ -656,7 +830,8 @@
           if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.textContent =
-              submitBtn.classList && submitBtn.classList.contains("reply-submit-btn")
+              submitBtn.classList &&
+              submitBtn.classList.contains("reply-submit-btn")
                 ? "Submit Reply"
                 : "Submit Comment";
           }
@@ -673,8 +848,11 @@
         })
         .catch((err) => {
           console.error("Failed to load comments from Google Sheets:", err);
-          document.getElementById("comments-list").innerHTML =
-            '<p class="no-comments" style="color: #d35400;">Failed to load comments from the database.</p>';
+          const listEl = document.getElementById("comments-list");
+          if (listEl) {
+            listEl.innerHTML =
+              '<p class="no-comments" style="color: #d35400;">Failed to load comments from the database.</p>';
+          }
         });
     }
 
@@ -691,22 +869,55 @@
         const emailInput = document.getElementById("comment-email");
         const linkedinInput = document.getElementById("comment-linkedin");
         const bodyInput = document.getElementById("comment-body-input");
+        const noteEl = document.getElementById("main-identity-note");
+        const mainIdentityFields = document.getElementById("main-identity-fields");
+        const mainIdentityBar = document.getElementById("main-identity-bar");
 
         const currentSaved = getCommenterInfo();
-        const author = authorInput ? authorInput.value.trim() : (currentSaved ? currentSaved.name : "");
-        const email = emailInput ? emailInput.value.trim() : (currentSaved ? currentSaved.email : "");
-        const linkedin = linkedinInput ? linkedinInput.value.trim() : (currentSaved ? currentSaved.linkedin : "");
-        const body = bodyInput.value.trim();
+        const author = authorInput && authorInput.value.trim()
+          ? authorInput.value.trim()
+          : currentSaved ? currentSaved.name : "";
+        const email = emailInput && emailInput.value.trim()
+          ? emailInput.value.trim()
+          : currentSaved ? currentSaved.email : "";
+        const linkedin = linkedinInput && linkedinInput.value.trim()
+          ? linkedinInput.value.trim()
+          : currentSaved ? currentSaved.linkedin : "";
+        const body = bodyInput ? bodyInput.value.trim() : "";
 
-        if (!author || !body) return;
+        if (!body) {
+          if (bodyInput) bodyInput.focus();
+          return;
+        }
+
+        if (!author) {
+          if (mainIdentityFields) {
+            mainIdentityFields.dataset.userManuallyOpened = "true";
+            mainIdentityFields.style.display = "flex";
+          }
+          if (mainIdentityBar) mainIdentityBar.style.display = "none";
+          if (authorInput) authorInput.focus();
+          return;
+        }
 
         if (!email && !linkedin) {
-          alert("Please provide your Email or LinkedIn to verify your identity.");
+          if (mainIdentityFields) {
+            mainIdentityFields.dataset.userManuallyOpened = "true";
+            mainIdentityFields.style.display = "flex";
+          }
+          if (mainIdentityBar) mainIdentityBar.style.display = "none";
+          if (noteEl) {
+            noteEl.style.display = "block";
+            noteEl.textContent =
+              "* Please provide an Email or LinkedIn to verify your comment.";
+          }
+          if (emailInput) emailInput.focus();
           return;
         }
 
         // Save commenter identity
         saveCommenterInfo(author, email, linkedin);
+        updateAllIdentityDisplays();
 
         const newComment = {
           commentId: generateCommentId(),
@@ -719,10 +930,9 @@
         };
 
         handleActiveSubmit(newComment, submitBtn, () => {
-          bodyInput.value = "";
+          if (bodyInput) bodyInput.value = "";
         });
       });
     }
   }
 })();
-

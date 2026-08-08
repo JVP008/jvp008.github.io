@@ -913,41 +913,43 @@ body.dark .reply-toggle-btn:hover {
 }
 
 .reply-form-container {
-  margin-top: 12px;
-  padding: 16px;
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
+  margin-top: 10px;
+  padding: 12px 14px;
+  background-color: #f9fbfd;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
   animation: commentFadeIn 0.2s ease-out forwards;
 }
 
 body.dark .reply-form-container {
-  background-color: #1a1a1a;
-  border-color: #333;
+  background-color: #1a1e24;
+  border-color: #2d3748;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .reply-form {
   border-top: none;
   padding-top: 0;
-  gap: 12px;
+  gap: 10px;
 }
 
 .reply-form-actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .reply-submit-btn {
   font-family: inherit;
-  font-size: 0.9em;
-  font-weight: bold;
-  padding: 8px 16px;
-  border: 1px solid #333;
+  font-size: 0.88em;
+  font-weight: 600;
+  padding: 7px 16px;
+  border: 1px solid #1a0dab;
   border-radius: 6px;
-  background-color: #fff;
-  color: #333;
+  background-color: #1a0dab;
+  color: #fff;
   cursor: pointer;
   transition:
     background-color 0.2s ease,
@@ -955,27 +957,28 @@ body.dark .reply-form-container {
 }
 
 .reply-submit-btn:hover {
-  background-color: #f0f0f0;
+  background-color: #130a80;
+  border-color: #130a80;
 }
 
 body.dark .reply-submit-btn {
-  background-color: #1a1a1a;
-  border-color: #d4d4d4;
-  color: #d4d4d4;
+  background-color: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
 }
 
 body.dark .reply-submit-btn:hover {
-  background-color: #2b2b2b;
+  background-color: #1d4ed8;
 }
 
 .reply-cancel-btn {
   background: none;
-  border: 1px solid #ccc;
+  border: 1px solid #cbd5e1;
   border-radius: 6px;
-  padding: 8px 14px;
+  padding: 7px 14px;
   font-family: inherit;
-  font-size: 0.9em;
-  color: #666;
+  font-size: 0.88em;
+  color: #64748b;
   cursor: pointer;
   transition:
     background-color 0.2s ease,
@@ -984,18 +987,18 @@ body.dark .reply-submit-btn:hover {
 }
 
 .reply-cancel-btn:hover {
-  background-color: #f0f0f0;
-  color: #333;
+  background-color: #f1f5f9;
+  color: #1e293b;
 }
 
 body.dark .reply-cancel-btn {
-  border-color: #444;
-  color: #aaa;
+  border-color: #475569;
+  color: #94a3b8;
 }
 
 body.dark .reply-cancel-btn:hover {
-  background-color: #2b2b2b;
-  color: #eee;
+  background-color: #2d3748;
+  color: #f8fafc;
 }
 
 .comment-replies {
@@ -1033,12 +1036,12 @@ body.dark .comment-card.is-reply {
 
 /* ── Commenter Identity Bar & Fields ── */
 .comment-identity-bar {
-  font-size: 0.9em;
-  color: #555;
-  background-color: #f5f5f5;
-  padding: 8px 12px;
+  font-size: 0.88em;
+  color: #475569;
+  background-color: #edf2f7;
+  padding: 6px 12px;
   border-radius: 6px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1046,17 +1049,18 @@ body.dark .comment-card.is-reply {
 }
 
 body.dark .comment-identity-bar {
-  color: #ccc;
-  background-color: #252525;
-  border-color: #383838;
+  color: #cbd5e1;
+  background-color: #242b35;
+  border-color: #334155;
 }
 
 .identity-name-display {
-  color: #222;
+  color: #0f172a;
+  font-weight: 600;
 }
 
 body.dark .identity-name-display {
-  color: #eee;
+  color: #f8fafc;
 }
 
 .identity-edit-link {
@@ -1064,7 +1068,7 @@ body.dark .identity-name-display {
   border: none;
   padding: 0;
   font-family: inherit;
-  font-size: 0.9em;
+  font-size: 0.85em;
   color: #0a66c2;
   text-decoration: underline;
   cursor: pointer;
@@ -1087,7 +1091,18 @@ body.dark .identity-edit-link:hover {
 .comment-identity-fields {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
+}
+
+.comment-identity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.reply-body-group textarea,
+.reply-form textarea {
+  min-height: 65px;
 }
 
 /* ── Database Setup Alert ── */
@@ -1116,14 +1131,14 @@ body.dark .database-setup-alert p {
 
 /* ── Identity Note ── */
 .identity-note {
-  font-size: 0.85em;
-  color: #d35400;
+  font-size: 0.82em;
+  color: #c2410c;
   font-style: italic;
-  margin: -8px 0 4px 0;
+  margin: 0;
 }
 
 body.dark .identity-note {
-  color: #ffa726;
+  color: #fb923c;
 }
 
 /* ── Form OR Divider ── */
