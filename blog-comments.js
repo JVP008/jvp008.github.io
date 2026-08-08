@@ -192,25 +192,63 @@
     });
   }
 
+  // Helper to manage local thread relationship cache (so replies stay threaded even with legacy sheets)
+  const THREAD_CACHE_KEY = `comments_threads_${filename}`;
+
+  function getThreadCache() {
+    try {
+      const raw = localStorage.getItem(THREAD_CACHE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function cacheThreadReply(childId, parentId, signature) {
+    try {
+      const map = getThreadCache();
+      if (childId) map[childId] = parentId;
+      if (signature) map[signature] = parentId;
+      localStorage.setItem(THREAD_CACHE_KEY, JSON.stringify(map));
+    } catch (e) {}
+  }
+
   // Build a tree from flat comment list (group replies under their parentId)
   function buildCommentTree(flatList) {
     const commentMap = new Map();
     const rootComments = [];
+    const threadCache = getThreadCache();
 
-    // Normalize comments and index by commentId
+    // Pass 1: Normalize comments, assign deterministic IDs if missing, and recover cached parentId
     flatList.forEach((comment, idx) => {
+      const cleanAuthor = String(comment.author || "").trim();
+      const cleanBody = String(comment.body || "").trim();
+      const signature = `${cleanAuthor}_${cleanBody}`;
+
+      // Stable deterministic commentId
       const commentId = comment.commentId
         ? String(comment.commentId).trim()
-        : comment.timestamp
-          ? `c_${comment.timestamp}_${idx}`
-          : `c_${idx}`;
+        : comment.id
+          ? String(comment.id).trim()
+          : comment.timestamp
+            ? `c_${comment.timestamp}_${cleanAuthor.replace(/\W/g, "")}`
+            : `c_row_${idx}`;
 
-      const parentId =
+      // Read parentId from server response or fallback to local thread cache
+      let parentId =
         comment.parentId &&
         comment.parentId !== "null" &&
         comment.parentId !== "undefined"
           ? String(comment.parentId).trim()
           : "";
+
+      if (!parentId) {
+        if (threadCache[commentId]) {
+          parentId = String(threadCache[commentId]).trim();
+        } else if (threadCache[signature]) {
+          parentId = String(threadCache[signature]).trim();
+        }
+      }
 
       const normalized = {
         ...comment,
@@ -222,7 +260,7 @@
       commentMap.set(commentId, normalized);
     });
 
-    // Attach children to their parent or place in rootComments
+    // Pass 2: Attach children to their parent or place in rootComments
     commentMap.forEach((comment) => {
       if (comment.parentId && commentMap.has(comment.parentId)) {
         commentMap.get(comment.parentId).children.push(comment);
@@ -501,6 +539,13 @@
           body: body,
           timestamp: Date.now(),
         };
+
+        // Cache thread link locally so replies never get separated
+        cacheThreadReply(
+          replyCommentData.commentId,
+          comment.commentId,
+          `${author}_${body}`
+        );
 
         onSubmitComment(replyCommentData, submitBtn, () => {
           // Reset form and hide it
