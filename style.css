@@ -1034,72 +1034,6 @@ body.dark .comment-card.is-reply {
   font-size: 0.9em;
 }
 
-/* ── Commenter Identity Bar & Fields ── */
-.comment-identity-bar {
-  font-size: 0.88em;
-  color: #475569;
-  background-color: #edf2f7;
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid #e2e8f0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-body.dark .comment-identity-bar {
-  color: #cbd5e1;
-  background-color: #242b35;
-  border-color: #334155;
-}
-
-.identity-name-display {
-  color: #0f172a;
-  font-weight: 600;
-}
-
-body.dark .identity-name-display {
-  color: #f8fafc;
-}
-
-.identity-edit-link {
-  background: none;
-  border: none;
-  padding: 0;
-  font-family: inherit;
-  font-size: 0.85em;
-  color: #0a66c2;
-  text-decoration: underline;
-  cursor: pointer;
-  margin-left: 6px;
-  transition: color 0.2s ease;
-}
-
-body.dark .identity-edit-link {
-  color: #70b5f9;
-}
-
-.identity-edit-link:hover {
-  color: #004182;
-}
-
-body.dark .identity-edit-link:hover {
-  color: #a0cffc;
-}
-
-.comment-identity-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.comment-identity-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 10px;
-}
-
 .reply-body-group textarea,
 .reply-form textarea {
   min-height: 65px;
@@ -1127,32 +1061,6 @@ body.dark .database-setup-alert {
 
 body.dark .database-setup-alert p {
   color: #e0d8b0;
-}
-
-/* ── Identity Note ── */
-.identity-note {
-  font-size: 0.82em;
-  color: #c2410c;
-  font-style: italic;
-  margin: 0;
-}
-
-body.dark .identity-note {
-  color: #fb923c;
-}
-
-/* ── Form OR Divider ── */
-.comment-form-or {
-  text-align: center;
-  font-size: 0.78em;
-  font-weight: bold;
-  letter-spacing: 1.5px;
-  color: #888;
-  margin: -10px 0 -10px 0;
-}
-
-body.dark .comment-form-or {
-  color: #777;
 }
 
 /* ── Live Activities Section ── */
