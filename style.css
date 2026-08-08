@@ -869,6 +869,227 @@ body.dark .comment-form button[type="submit"]:hover {
   background-color: #2b2b2b;
 }
 
+/* ── Threaded Comments & Replies ── */
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.comment-reply-btn,
+.reply-toggle-btn {
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  font-family: inherit;
+  font-size: 0.82em;
+  font-weight: 600;
+  color: #0a66c2;
+  cursor: pointer;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.comment-reply-btn:hover,
+.reply-toggle-btn:hover {
+  background-color: rgba(10, 102, 194, 0.08);
+  text-decoration: underline;
+}
+
+body.dark .comment-reply-btn,
+body.dark .reply-toggle-btn {
+  color: #70b5f9;
+}
+
+body.dark .comment-reply-btn:hover,
+body.dark .reply-toggle-btn:hover {
+  background-color: rgba(112, 181, 249, 0.12);
+}
+
+.reply-form-container {
+  margin-top: 12px;
+  padding: 16px;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  animation: commentFadeIn 0.2s ease-out forwards;
+}
+
+body.dark .reply-form-container {
+  background-color: #1a1a1a;
+  border-color: #333;
+}
+
+.reply-form {
+  border-top: none;
+  padding-top: 0;
+  gap: 12px;
+}
+
+.reply-form-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.reply-submit-btn {
+  font-family: inherit;
+  font-size: 0.9em;
+  font-weight: bold;
+  padding: 8px 16px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #333;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.reply-submit-btn:hover {
+  background-color: #f0f0f0;
+}
+
+body.dark .reply-submit-btn {
+  background-color: #1a1a1a;
+  border-color: #d4d4d4;
+  color: #d4d4d4;
+}
+
+body.dark .reply-submit-btn:hover {
+  background-color: #2b2b2b;
+}
+
+.reply-cancel-btn {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-family: inherit;
+  font-size: 0.9em;
+  color: #666;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.reply-cancel-btn:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+body.dark .reply-cancel-btn {
+  border-color: #444;
+  color: #aaa;
+}
+
+body.dark .reply-cancel-btn:hover {
+  background-color: #2b2b2b;
+  color: #eee;
+}
+
+.comment-replies {
+  margin-top: 12px;
+  margin-left: 20px;
+  padding-left: 14px;
+  border-left: 2px solid #eaeaea;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+body.dark .comment-replies {
+  border-left-color: #333;
+}
+
+.comment-replies.collapsed {
+  display: none;
+}
+
+.comment-card.is-reply {
+  padding: 12px 14px;
+  background-color: #fcfcfc;
+}
+
+body.dark .comment-card.is-reply {
+  background-color: #1e1e1e;
+}
+
+.comment-card.is-reply .comment-avatar {
+  width: 32px;
+  height: 32px;
+  font-size: 0.9em;
+}
+
+/* ── Commenter Identity Bar & Fields ── */
+.comment-identity-bar {
+  font-size: 0.9em;
+  color: #555;
+  background-color: #f5f5f5;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #e5e5e5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+body.dark .comment-identity-bar {
+  color: #ccc;
+  background-color: #252525;
+  border-color: #383838;
+}
+
+.identity-name-display {
+  color: #222;
+}
+
+body.dark .identity-name-display {
+  color: #eee;
+}
+
+.identity-edit-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: 0.9em;
+  color: #0a66c2;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-left: 6px;
+  transition: color 0.2s ease;
+}
+
+body.dark .identity-edit-link {
+  color: #70b5f9;
+}
+
+.identity-edit-link:hover {
+  color: #004182;
+}
+
+body.dark .identity-edit-link:hover {
+  color: #a0cffc;
+}
+
+.comment-identity-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 /* ── Database Setup Alert ── */
 .database-setup-alert {
   margin-top: 30px;
